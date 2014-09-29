@@ -1,6 +1,6 @@
 # I just told you to ignore the sass cache!
-.sass_cache/*
-.sass_cache
+.sass-cache/*
+.sass-cache
 
 node_modules
 public/css
