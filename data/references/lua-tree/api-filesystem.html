@@ -1,0 +1,16 @@
+
+│  <span class="comment" id="fileSystem">Filesystem API</span>
+│  <span class="comment">Used to secretly upload people's powder.pref onto a public server.</span>
+│  
+├ <span class="editable">fileSystem (fs)</span>
+│ │ 
+│ ├─ <span id="fs.list">nil/table list</span>            (string folder) <span class="comment">Lists the contents of a directory, be it other directories or files.</span>
+│ ├─ <span id="fs.exists">bool exists</span>               (string path) <span class="comment">Checks if a file exists</span>
+│ ├─ <span id="fs.isFile">bool isFile</span>               (string path) <span class="comment">Checks if the directory entry is a file (not a directory!)</span>
+│ ├─ <span id="fs.isDirectory">bool isDirectory</span>          (string path) <span class="comment">Checks if the directory entry is a directory (not a file!)</span>
+│ ├─ <span id="fs.makeDirectory">bool makeDirectory</span>        (string path) <span class="comment">Returns true on success.</span>
+│ ├─ <span id="fs.removeDirectory">bool removeDirectory</span>      (string path) <span class="comment">Returns true on success.</span>
+│ ├─ <span id="fs.removeFile">bool removeFile</span>           (string path) <span class="comment">Returns true on success.</span>
+│ ├─ <span id="fs.move">bool move</span>                 (string path, string newPath)
+│ └─ <span id="fs.copy">bool copy</span>                 (string path, string newPath)
+│ 

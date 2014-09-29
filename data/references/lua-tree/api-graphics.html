@@ -1,0 +1,24 @@
+│  <span class="comment" id="graphics">Graphics API</span>
+│  <span class="comment">Drawing other stuff onto the screen, like text or boxes.</span>
+│  <span class="comment">--</span>
+│  
+├ <span class="editable">graphics (gfx)</span>
+│ │ 
+│ ├─ <span id="gfx.WIDTH">WIDTH</span> <span class="comment">YRES (384) + MENUSIZE</span>
+│ ├─ <span id="gfx.HEIGHT">HEIGHT</span> <span class="comment">XRES (612) + BARSIZE</span>
+│ │ 
+│ ├─ <span id="gfx.textSize">int textSize</span>              (string text) <span class="comment">Get the width of a string when it's drawn in TPT's font </span>
+│ ├─ <span id="gfx.drawText">nil drawText</span>              (int x, int y, string text) <span class="comment">Draw text for one frame = tpt.drawtext</span>
+│ │      └─                    (int x, int y, string text, int r, int g, int b, int a)
+│ │ 
+│ ├─ <span id="gfx.drawLine">nil drawLine</span>              (int x1, int x2, int y1, int y2) <span class="comment">Draws a line for one frame</span>
+│ │      └─                    (int x1, int y1, int x2, int y2, int r, int g, int b, int a)
+│ ├─ <span id="gfx.drawRect">nil drawRect</span>              (int x, int y, int width, int height) <span class="comment">Draws a hollow rect for the next frame</span>
+│ │      └─                    (int x, int y, int width, int height, int r, int g, int b)
+│ ├─ <span id="gfx.fillRect">nil fillRect</span>              (int x, int y, int width, int height) <span class="comment">Draws a filled rect for the next frame</span>
+│ │      └─                    (int x, int y, int width, int height, int r, int g, int b, int a)
+│ ├─ <span id="gfx.drawCircle">nil drawCircle</span>            (int cx, int cy, int rx, int ry) <span class="comment">Draws an ellipse with two radiuses and a center point</span>
+│ │      └─                    (int cx, int cy, int rx, int ry, int r, int g, int b, int a)
+│ └─ <span id="gfx.fillCircle">nil fillCircle</span>            (int cx, int cy, int rx, int ry) <span class="comment">Draws an ellipse with two radiuses and a center point</span>
+│        └─                    (int cx, int cy, int rx, int ry, int r, int g, int b, int a)
+│ 
