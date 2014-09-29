@@ -1,0 +1,25 @@
+
+-- Allocates space for a new element. Use four letters for name, and anything 
+-- unique for a namespace.
+local el = elements.allocate("namespace", "elem")
+
+-- If you want to, you can take all properties off another element by this
+-- and then modify the ones you want.
+elements.element(el, elements.element(elements.DEFAULT_PT_DMND))
+
+function el_Graphics(index, colr, colg, colb)
+    -- return cache, pixel_mode,
+    --        cola, colr, colg, colb, 
+    --        firea, firer, fireg, fireb
+    return 1, 0x0000001, 255, colr, colg-10, colb, 0, 0, 0, 0
+end
+elements.property(el, "Graphics", el_Graphics)
+
+function el_Update(index, partx, party, surround_space, nt)
+    if surround_space == 0 and nt == 0 then
+        return 1 -- skip movement code, this pixel should be killed anyway
+    else 
+        return 0 -- ok! 
+    end
+end
+elements.property(el, "Update", el_Update)

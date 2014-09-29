@@ -1,0 +1,102 @@
+//- it's like, a thing that compiles /into/ the actual .html file!
+//- jade lua-reference.jade
+
+extends layout
+
+block append head
+  link(rel='stylesheet', type='text/css', href='/css/lua-reference.css')
+  link(rel='stylesheet', type='text/css', href='/highlightjs/styles/mysolarized.css')
+
+block content
+  h1 Mega coding reference
+  //- long list of includes
+  //- part 0: addendum
+  .head
+    include lua-tree/head.html
+  .notes
+    include lua-tree/notes.html
+
+  .tree#tree
+    p.
+      (global)
+      │
+      │
+      │
+    //- part 1: lua tree
+    include lua-tree/api-legacy.html
+    include lua-tree/api-interface.html
+    include lua-tree/api-elements.html
+    include lua-tree/api-renderer.html
+    include lua-tree/api-simulation.html
+    include lua-tree/api-bits.html
+
+  //- part 2: properties & other stuff
+  .properties-overview
+    include lua-tree/api-properties.html
+
+  //- part 3: element properties
+  .properties-detailed
+    include lua-tree/element-properties/head.html
+    include lua-tree/element-properties/Advection.html
+    include lua-tree/element-properties/AirDrag.html
+    include lua-tree/element-properties/AirLoss.html
+    include lua-tree/element-properties/Collision.html
+    include lua-tree/element-properties/Colour.html
+    include lua-tree/element-properties/Description.html
+    include lua-tree/element-properties/Diffusion.html
+    include lua-tree/element-properties/Enabled.html
+    include lua-tree/element-properties/Explosive.html
+    include lua-tree/element-properties/Falldown.html
+    include lua-tree/element-properties/Flammable.html
+    include lua-tree/element-properties/Graphics.html
+    include lua-tree/element-properties/Gravity.html
+    include lua-tree/element-properties/Hardness.html
+    include lua-tree/element-properties/HeatConduct.html
+    include lua-tree/element-properties/HotAir.html
+    include lua-tree/element-properties/Identifier.html
+    include lua-tree/element-properties/Loss.html
+    include lua-tree/element-properties/Meltable.html
+    include lua-tree/element-properties/MenuSection.html
+    include lua-tree/element-properties/MenuVisible.html
+    include lua-tree/element-properties/Name.html
+    include lua-tree/element-properties/Properties.html
+    include lua-tree/element-properties/State.html
+    include lua-tree/element-properties/Temperature.html
+    include lua-tree/element-properties/Update.html
+    include lua-tree/element-properties/Weight.html
+
+  p.
+    Good luck coding! Hope this will come in handy.
+    ~boxmein 
+
+block append header
+  .aside#aside
+    p Links
+    ul
+      li: a#bright(href='javascript:;') Bright mode
+      li: a(href='#') To the top!
+      li: a(href='#treetop') Treetop
+      li: a(href='#notes') Notes
+      li: a(href='#tpt') tpt.*
+      li: a(href='#elements') elements.*
+      li: a(href='#simulation') simulation.*
+      li: a(href='#renderer') renderer.*
+      li: a(href='#graphics') graphics.*
+      li: a(href='#fileSystem') fileSystem.*
+      li: a(href='#interface') interface.*
+      li: a(href='#bit') bit.*
+      li: a(href='#boolint') boolint ?!
+      li: a(href='#tpt.el') tpt.el.*
+      li: a(href='#elements.property') elements.property()
+      li: a(href='#particles') particles
+      li: a(href='#properties') properties
+      li: a(href='#tpt.el') tpt.el.*
+      li: a(href='#tpt.eltransition') tpt.eltransition.*
+      li: a(href='#properties.graphics_func') graphics_func
+      li: a(href='#properties.update_func') update_func
+
+block append body
+  script(src='/highlightjs/highlight.pack.js')
+  script(src='/js/lua-ref-stuff.js')
+  script.
+    hljs.initHighlightingOnLoad();

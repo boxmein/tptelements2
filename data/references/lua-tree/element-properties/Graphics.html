@@ -1,0 +1,37 @@
+<span id="properties.graphics_func"></span>
+<h2 id="properties.Graphics">int (*Graphics) (GRAPHICS_FUNC_ARGS)</h2>
+
+<p>For how this works in Lua, you are passed four variables and expected to 
+return a dozen more.</p>
+
+<code class="nohighlight">Parameters: index, colr, colg, colb
+Return values: cache, pixel_mode, cola, colr, colg, colb, firea, firer, 
+               fireg, and fireb.</code>
+
+<p>The cache variable tells the graphics renderer not to call this function any-
+more, since the color won't change anyway. Aside that, all properties are the 
+same as what C++ should have them.</p>
+
+<p>In C++ however, you are passed pointers with all the values to be returned. 
+Bluntly assign to them as you would to any other pointer.</p>
+
+<code>*colr = 255;</code>
+
+<p>Also check out all the different arguments you will get as your function
+parameters.</p>
+
+<code>#define GRAPHICS_FUNC_ARGS Renderer * ren, Particle *cpart, int nx, int ny, 
+     int *pixel_mode, int *cola, int *colr, int *colg, 
+     int *colb, int *firea, int *firer, int *fireg, int *fireb</code>
+
+<code class="nohighlight">
+<span class="editable">ren</span> contains a reference to your local neighbourhood renderer, 
+<span class="editable">cpart</span> your current particle (you can do stuff like cpart->life!), 
+<span class="editable">nx</span> and <span class="editable">ny</span> to the particle's actual position (x and y),
+<span class="editable">pixel_mode</span> to any extra effects the pixel may be subject to,
+<span class="editable">cola</span>, <span class="editable">colr</span>, <span class="editable">colg</span> and <span class="editable">colb</span> represent the element's Colour property (alpha, 
+red, green and blue) at first, but should be modified to the end result's 
+colour, 
+<span class="editable">firea</span>, <span class="editable">firer</span>, <span class="editable">fireg</span> and <span class="editable">fireb</span> represent the fiery glow's colour, if the 
+element has a fiery glow pixel mode applied, as alpha, red, green and blue.
+</code>

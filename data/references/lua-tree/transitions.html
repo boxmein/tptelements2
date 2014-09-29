@@ -1,0 +1,63 @@
+<span id="properties.transitions">Transitions</span>
+-----------
+
+Transitions are really easy. Imagine you've got a line that you carefully split
+into three sections: a middle where your element lives happily, and a lower edge
+and a higher edge too, after which your element decides it doesn't stand the
+heat or pressure anymore and transforms into another element.
+
+Before we go on with the line theory, there's a few types of special definitions
+in the C++ version you can use instead if you never want to transition to
+another element at one point.
+
+<span class="editable">IPL</span> = Impossibly Low Pressure (That Never Will Be Reached)
+<span class="editable">IPH</span> = Impossibly High Pressure
+<span class="editable">ITL</span> = Impossibly Low Temperature
+<span class="editable">ITH</span> = Impossibly High Temperature
+<span class="editable">NT</span> = No Type
+
+Then there's the properties you need to change. There's two aforementioned "lines"
+and a total of 2 x 2 x 2 = 8 properties we need to change. 
+
+
+LowPressure keeps track of a lower limit of pressure: if the pressure around
+this particle drops below LowPressure, turn this particle into
+LowPressureTransition.
+
+<span class="editable" id="properties.LowPressure">LowPressure</span> = IPL;
+<span class="editable" id="properties.LowPressureTransition">LowPressureTransition</span> = NT;
+
+HighPressure keeps track of an upper limit of pressure: if the pressure around
+this particle drops below HighPressure, turn this particle into
+HighPressureTransition.
+
+<span class="editable" id="properties.HighPressure">HighPressure</span> = IPH; 
+<span class="editable" id="properties.HighPressureTransition">HighPressureTransition</span> = NT;
+
+LowTemperature keeps track of a lower limit of temperature: if the temperature
+around this particle drops below LowTemperature, turn this particle into
+LowTemperatureTransition.
+
+<span class="editable" id="properties.LowTemperature">LowTemperature</span> = ITL;
+<span class="editable" id="properties.LowTemperatureTransition">LowTemperatureTransition</span> = NT;
+
+HighTemperature keeps track of an upper limit of temperature: if the temperature
+around this particle drops below HighTemperature, turn this particle into
+HighTemperatureTransition.
+
+<span class="editable" id="properties.HighTemperature">HighTemperature</span> = ITH;
+<span class="editable" id="properties.HighTemperatureTransition">HighTemperatureTransition</span> = NT;
+
+For example, 
+
+<span class="editable">LowPressure = -15.0f; 
+LowPressureTransition = PT_DUST;</span>
+
+means that an element will turn into dust at -15 pressure.
+
+<span class="editable">HighTemperature = ITH; 
+HighTemperatureTransition = NT;</span>
+
+means that an element will not have an upper threshold. No temperature can be
+bigger than ITH!
+

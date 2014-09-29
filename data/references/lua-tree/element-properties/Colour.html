@@ -1,0 +1,13 @@
+<h2 id="properties.Colour">int Colour</h2>
+
+<p>This will be the particle's colour in Basic render mode as well as 
+the element button's. It has a format similar to CSS colours: `0xRRGGBB` where 
+every letter specifies which colour the byte specifies, so 0xFF0000 would have 
+exactly 255/255 tones red, and 0 tones both green and blue.</p>
+
+<p>You can set it in C++ by using the PIXPACK preprocessor macro: </p>
+
+<code>Colour = PIXPACK(0x333333);</code>
+
+<p>...and in Lua by using elements.property with the same hexadecimal value.</p>
+

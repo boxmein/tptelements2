@@ -1,0 +1,245 @@
+// src/simulation/elements/<elementname>.cpp:
+#include "simulation/Elements.h"
+//#TPT-Directive ElementClass Element_BCOL PT_BCOL 73
+Element_BCOL::Element_BCOL()
+{
+  // Element's name on the new lua API - format it like NAMESPACE_PT_ELEMENTNAME
+  Identifier = "DEFAULT_PT_BCOL"; 
+  
+  // Element's in-game name. (Limited to 4 letters!)
+  Name = "BCOL"; 
+  
+  // Element's colour in hexadecimal in the format 0xRRGGBB
+  Colour = PIXPACK(0x333333); 
+  
+  // Whether or not it's going to exist in any element menu.
+  MenuVisible = 1; 
+  
+  // Which menu section it's in.
+  //Look for SC_* values in src/simulation/SimulationData.h
+  MenuSection = SC_POWDERS; 
+  
+  // If the element is actually used in-game: 
+  // 0 will disable the element entirely.
+  Enabled = 1; 
+  
+  // How much moving air or wind affects it.
+  Advection = 0.4f; 
+  
+  // How much air the particle "drags" along with it when moving. 
+  AirDrag = 0.04f * CFDS;
+  
+  // How much the particle slows down moving air. 
+  // 1 for no effect, 0 for full effect. 
+  AirLoss = 0.94f; 
+  
+  // How much speed the particle loses every frame. 
+  // 1 = no loss. 0.5 = half loss.
+  Loss = 0.95f; 
+  
+  // When this particle hits something, this value somehow 
+  // helps determine new velocity.
+  // Ctrl+F .Collision in Simulation.cpp
+  Collision = -0.1f; 
+  
+  // How fast the particle falls. Negative means it floats. 
+  Gravity = 0.3f; 
+  
+  // How much the particle wiggles like GAS.
+  Diffusion = 0.00f;
+  
+  // How much the particle increases pressure. 
+  HotAir = 0.000f  * CFDS; 
+  
+  // How does this particle move?
+  // (0 = solid. 1 = powder. 2 = liquid) 
+  Falldown = 1; 
+  
+  // How much this particle burns. 
+  // (0 = not at all. >0 = burns more.) 
+  Flammable = 0; 
+  
+  // Does the particle explode? 
+  // (0 = no. 1 = only with fire. 2 = with pressure > 2.5 or with fire.)
+  Explosive = 0; 
+  
+  // Does it melt? 
+  // (0 = no. 1 = yes)
+  Meltable = 5; 
+  
+  // How much acid affects the particle. 
+  // (0 = not at all. >0 = more corrodable)
+  Hardness = 2; 
+  
+  // Particle weight. Determines which sinks below which. 
+  //(1 = gas. 2 = light. 0-49 = liquids. 50-99 = powders. 
+  // 100 = solids. -1 for energy.)
+  // Values aren't limited to that, however!
+  Weight = 90; 
+  
+  // How hot does it spawn with? Automatically converted to Celsius.
+  //  #define R_TEMP 22
+  //  22 (room temperature in Celsius) + 273.15 (Celsius->Kelvin offset) =
+  Temperature = R_TEMP + 273.15f; 
+  
+  // How well it transfers heat. 
+  // (0 = badly. 255 = very very well) 
+  HeatConduct = 150; 
+  
+  // Element description, or the little text you get when mousing over 
+  // the element menu item.
+  Description = "Broken Coal. Heavy particles. See COAL"; 
+  
+  // Which state the element is in. 
+  // (ST_NONE = other. ST_SOLID = Solid. ST_LIQUID = Liquid. ST_GAS = Gas.)
+  State = ST_SOLID; 
+  
+  // Element properties. Binary OR them together.
+  //  See this forum post for details.
+  Properties = TYPE_PART; 
+
+/*
+  So this next part is about transitions. 
+  How this works is, you have to tell TPT about your upper and lower threshold
+  and the elements it'll change to when the threshold is met.
+  There's also a few predefined elements for when you don't want transitions: 
+  unreachable levels of pressure and temperature which will never trigger a 
+  transition as well as an element for No Type.
+
+  IPL = Impossibly Low Pressure (That Never Will Be Reached)
+  IPH = Impossibly High Pressure
+  NT = No Type Whatsoever
+  ITL = Impossibly Low Temperature
+  ITH = Impossibly High Temperature
+*/
+
+  // if pressure is lower than this then change to that element type
+  LowPressure = IPL;
+  LowPressureTransition = NT;
+
+  // if pressure is higher than this then change to that element type
+  HighPressure = IPH; 
+  HighPressureTransition = NT;
+
+  // if temperature is higher than this then change to that element type
+  LowTemperature = ITL;
+  LowTemperatureTransition = NT;
+
+  // if temperature is lower than this then change to that element type
+  HighTemperature = ITH;
+  HighTemperatureTransition = NT;
+
+  // address of the update function, 99% of the time it's 
+  // Element_YOURELEMENT::update
+  Update = &Element_BCOL::update;
+
+  // address of the graphics function. 50% of the time you won't need it, 
+  // and 50% of the time all the time you will have it as 
+  // Element_YOURELEMENT::graphics
+  Graphics = &Element_BCOL::graphics; 
+
+}
+
+/* 
+  Some definitions you could remember:
+
+  #define UPDATE_FUNC_ARGS Simulation* sim, int i, int x, int y, 
+          int surround_space, int nt, Particle *parts, int pmap[YRES][XRES]
+  #define UPDATE_FUNC_SUBCALL_ARGS sim, i, x, y, surround_space, nt, parts, pmap
+  #define BOUNDS_CHECK true
+*/
+
+// Everything you want to do once per particle to this element, goes here
+//#TPT-Directive ElementHeader Element_BCOL static int update(UPDATE_FUNC_ARGS)
+int Element_BCOL::update(UPDATE_FUNC_ARGS)
+ {
+  //Example code
+  int r, rx, ry, trade, temp;
+  if (parts[i]>=0) {
+    sim->create_part(i, x, y, PT_FIRE);
+    return 1;
+  } else if (parts[i].life < 100) {
+    parts[i].life--;
+    sim->create_part(-1, x+rand()%3-1, y+rand()%3-1, PT_FIRE);
+  }
+  for (rx=-2; rx<3; rx++)
+    for (ry=-2; ry<3; ry++)
+      if (x+rx>=0 && y+ry>0 && x+rx<XRES && y+ry<YRES && (rx || ry))
+      {
+        r = pmap[y+ry][x+rx];
+        if (!r)
+          continue;
+        if (((r&0xFF)==PT_FIRE || (r&0xFF)==PT_PLSM) && 1>(rand()%500))
+        {
+          if (parts[i].life>100) {
+            parts[i].life = 99;
+          }
+        }
+        if ((r&0xFF)==PT_LAVA && 1>(rand()%500))
+        {
+          if (parts[r>>8].ctype == PT_IRON) {
+            parts[r>>8].ctype = PT_METL;
+            sim->kill_part(i);
+            return 1;
+          }
+        }
+      }
+
+  if(parts[i].temp > parts[i].tmp2)
+    parts[i].tmp2 = parts[i].temp;
+  return 0;
+}
+
+/*
+  #define GRAPHICS_FUNC_ARGS Renderer *ren, Particle *cpart, int nx, int ny, 
+          int *pixel_mode, int* cola, int *colr, int *colg, 
+          int *colb, int *firea, int *firer, int *fireg, int *fireb
+  #define GRAPHICS_FUNC_SUBCALL_ARGS ren, cpart, nx, ny, pixel_mode, cola, colr, 
+          colg, colb, firea, firer, fireg, fireb 
+*/
+// You can play around with the particle's colour here.
+//#TPT-Directive ElementHeader Element_BCOL static int graphics(GRAPHICS_FUNC_ARGS)
+int Element_BCOL::graphics(GRAPHICS_FUNC_ARGS)
+{
+  // Example code
+  *colr += (cpart->tmp2-295.15f)/3;
+  if (*colr > 170)
+    *colr = 170;
+  if (*colr < *colg)
+    *colr = *colg;
+  *colg = *colb = *colr;
+  if((cpart->temp-295.15f) > 300.0f-200.0f)
+  {
+    float frequency = 3.1415/(2*300.0f-(300.0f-200.0f));
+    int q = ((cpart->temp-295.15f)>300.0f) ? 
+           300.0f-(300.0f-200.0f) : 
+           (cpart->temp-295.15f)-(300.0f-200.0f);
+    *colr += sin(frequency*q) * 226;
+    *colg += sin(frequency*q*4.55 +3.14) * 34;
+    *colb += sin(frequency*q*2.22 +3.14) * 64;
+  }
+  return 0;
+}
+
+// Explicit destructors!
+Element_BCOL::~Element_BCOL() {}
+
+/* 
+  If AND ONLY IF you can't use generator.py, 
+  here are the lines to manually copy to ElementClasses.cpp and ElementClasses.h
+  (Make sure to paste them into appropriate places - order probably matters for 
+  the elements.push_back line, but not for the ElementClasses.h lines!)
+*/
+
+// Into ElementClasses.h: 
+#define PT_BCOL 73
+class Element_BCOL : public Element
+{
+public:
+  Element_BCOL();
+  virtual ~Element_BCOL();
+  static int update(UPDATE_FUNC_ARGS);
+};
+
+// Into ElementClasses.cpp (into the vector definition): 
+elements.push_back(Element_BCOL());

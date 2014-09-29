@@ -1,0 +1,124 @@
+│  <span class="comment">Legacy Lua API</span>
+│  <span class="comment">Most, if not every, methods here are covered in other APIs. </span>
+│  <span class="comment">Except versions. Those are only accessible here.</span>
+├ <span class="editable" id="tpt">tpt</span>
+│ │
+│ ├─ <span id="tpt.version">version</span> 
+│ │  ├─ <span id="tpt.version.major">major</span>  <span class="comment">Major game version, for example 81</span>
+│ │  ├─ <span id="tpt.version.minor">minor</span>  <span class="comment">Minor version, for example 0</span>
+│ │  └─ <span id="tpt.version.build">build</span>  <span class="comment">Build version, for example 292</span>
+│ │
+│ ├─ <span id="tpt.parts">parts []</span> <span class="comment">Array of particles by index, emulates sim->parts in C++</span>
+│ │
+│ ├─ partsdata = nil <span class="comment">NYI</span>
+│ │  
+│ │  <span class="comment">Covered under <a href="#tpt.el">#properties</a> below.</span>
+│ ├─ el
+│ │  ├─ dust
+│ │  └─ ...
+│ │
+│ ├─ <span id="tpt.test">test</span>                      () <span class="comment">Unknown </span>
+│ ├─ <span id="tpt.drawtext">nil drawtext</span>              (int x, int y, string text) <span class="comment">Draws a text string only for the next frame</span>
+│ │      ├─                    (int x, int y, string text, int r, int g, int b)
+│ │      └─                    (int x, int y, string text, int r, int g, int b, int a)
+│ │
+│ ├─ <span id="tpt.create">int<span class="editable">[index]</span> create</span>         (int x, int y) <span class="comment">Creates a new particle at (x, y)</span>
+│ ├─ <span id="tpt.set_pause">nil/int set_pause</span>         (boolint state) <span class="comment">Pauses/unpauses the game (1 = paused). -1 returns the paused state.</span>
+│ ├─ <span id="tpt.toggle_pause">int toggle_pause</span>          () <span class="comment">Toggles pause for the game.</span>
+│ ├─ <span id="tpt.set_console">nil set_console</span>           (boolint state) <span class="comment">Opens/closes the console (1 = open)</span>
+│ ├─ <span id="tpt.log">nil log</span>                   (string text) <span class="comment">Logs to the console - precisely the thing on the right</span>
+│ ├─ <span id="tpt.set_pressure">nil set_pressure</span>          (int x, int y, int width, int height, int value) <span class="comment">Sets pressure for given rectangle. <span class="editable">[wall coordinates]</span></span>
+│ ├─ <span id="tpt.set_gravity">nil set_gravity</span>           (int x, int y) <span class="comment">Sets the Newtonian Gravity for a given position. </span>
+│ │                            (int x, int y, int width, int height)
+│ │                            (int x, int y, int width, int height, int value<span class="editable">[d. 0.0]</span>)
+│ │
+│ ├─ <span id="tpt.reset_gravity_field">nil reset_gravity_field</span>   (int x, int y) <span class="comment">Sets gravity at (x, y) to 0.0</span>
+│ │      └─                    (int x, int y, int width, int height)
+│ │
+│ ├─ <span id="tpt.reset_velocity">nil reset_velocity</span>        (int x, int y) <span class="comment">Sets velocity (vx and vy) in the specified rectangle to 0</span>
+│ │      └─                    (int x, int y, int width, int height)
+│ │
+│ ├─ <span id="tpt.reset_spark">nil reset_spark</span>           () <span class="comment">Converts SPRK(X) into X</span>
+│ ├─ <span id="tpt.set_property">nil set_property</span>          (string property, mixed value) <span class="comment">Sets a property of an element <span class="editable">[affects every element]</span></span>
+│ │      ├─                    (string property, mixed value, string type) <span class="comment"><span class="editable">[affects elements of 1 type]</span></span>
+│ │      ├─                    (string property, mixed value, int index) <span class="comment"><span class="editable">[affects particle via index]</span></span>
+│ │      ├─                    (string property, mixed value, int index, string type) <span class="comment"><span class="editable">[affects particle via index if it is of the specified type]</span></span>
+│ │      ├─                    (string property, mixed value, int x, int y) <span class="comment"><span class="editable">[affects particle via position]</span></span>
+│ │      ├─                    (string property, mixed value, int x, int y, string type) <span class="comment"><span class="editable">[affects particle via x/y if of the specified type]</span></span>
+│ │      ├─                    (string property, mixed value, int x, int y, int width, int height) <span class="comment"><span class="editable">[affects region]</span></span>
+│ │      └─                    (string property, mixed value, int x, int y, int width, int height, string type) <span class="comment"><span class="editable">[affects region if of the specified type]</span></span>
+│ │
+│ ├─ <span id="tpt.get_property">mixed get_property</span>        (string property, int index) <span class="comment">Returns some property of a given particle</span>
+│ │        └─                  (string property, int x, int y) 
+│ │
+│ ├─ <span id="tpt.set_wallmap">nil set_wallmap</span>           (int x, int y, int value) <span class="comment">Place or change a wall at (x, y) to (value)</span>
+│ │      └─ <span class="comment">NYI:            (int x, int y, int width, int height, int value)</span>
+│ │
+│ ├─ <span id="tpt.get_wallmap">int get_wallmap</span>           (int x, int y, <span class="editable">[NYI: int width, int height]</span>)   <span class="comment">Get the wall at <span class="editable">[wall coordinates!]</span> x, y</span>
+│ ├─ <span id="tpt.set_elecmap">nil set_elecmap</span>           (int x, int y, int value) <span class="comment">Sets the sim-&gt;emap value for <span class="editable">[wall coordinate]</span> x, y</span>
+│ │      └─                    (int x, int y, <span class="editable">[NYI:int width, int height,]</span> int value)
+│ │
+│ ├─ <span id="tpt.get_elecmap">int get_elecmap</span>           (int x, int y) <span class="comment">Returns the sim-&gt;emap value for <span class="editable">[wall coordinate]</span> x, y</span>
+│ ├─ <span id="tpt.drawpixel">nil drawpixel</span>             (int x, int y) <span class="comment">Draws a pixel for the next frame</span>
+│ │      ├─                    (int x, int y, int r, int g, int b)
+│ │      └─                    (int x, int y, int r, int g, int b, int a)
+│ │
+│ ├─ <span id="tpt.drawrect">nil drawrect</span>              (int x, int y, int width, int height) <span class="comment">Draws a hollow rect for the next frame</span>
+│ │      ├─                    (int x, int y, int width, int height, int red, int green, int blue)
+│ │      └─                    (int x, int y, int width, int height, int red, int green, int blue, int alpha)
+│ │
+│ ├─ <span id="tpt.fillrect">nil fillrect</span>              (int x, int y, int width, int height) <span class="comment">Draws a filled rect for the next frame</span>
+│ │      ├─                    (int x, int y, int width, int height, int red, int green, int blue)
+│ │      └─                    (int x, int y, int width, int height, int red, int green, int blue, int alpha)
+│ │
+│ ├─ <span id="tpt.drawline">nil drawline</span>              (int x1, int y1, int x2, int y2) <span class="comment">Draws a line for the next frame</span>
+│ │      ├─                    (int x1, int y1, int x2, int y2, int red, int green, int blue)
+│ │      └─                    (int x1, int y1, int x2, int y2, int red, int green, int blue, int alpha)
+│ │
+│ ├─ <span id="tpt.textwidth">int textwidth</span>             (string text) <span class="comment">Find out the width of a string of text in the TPT font</span>
+│ ├─ <span id="tpt.get_name">string get_name</span>           () <span class="comment">Returns username</span>
+│ ├─ <span id="tpt.set_shortcuts">nil set_shortcuts</span>         (boolint state) <span class="comment">Enable/Disable key shortcuts</span>
+│ ├─ <span id="tpt.delete">nil delete</span>                (int index) <span class="comment">Delete particle @ position/index</span>
+│ │      └─                    (int x, int y)
+│ │
+│ ├─ <span id="tpt.register_step">nil register_step</span>         (function onTick) <span class="comment">Add a function to be run every tick. You can have 6 of these.</span>
+│ ├─ <span id="tpt.unregister_step">nil unregister_step</span>       (function onTick) <span class="comment">Remove a given tick function to clean up the place. Ha!</span>
+│ ├─ <span id="tpt.register_mouseclick">nil register_mouseclick</span>   (function onClick) <span class="comment">Add a function(int mousex, int mousey, int button, int event) to run on mouse click.</span>
+│ ├─ <span id="tpt.unregister_mouseclick">nil unregister_mouseclick</span> (function onClick) <span class="comment">Remove a given click function</span>
+│ ├─ <span id="tpt.register_keypress">nil register_keypress</span>     (function onKey) <span class="comment">Add a function to run on keypress. Arguments: char key, int keyCode, int modifierKeys, int event</span>
+│ ├─ <span id="tpt.unregister_keypress">nil unregister_keypress</span>   (function onKey) <span class="comment">Remove a given key press function.</span>
+│ ├─ <span id="tpt.register_mouseevent">nil register_mouseevent</span>   <span class="comment">= register_mouseclick</span>
+│ ├─ <span id="tpt.unregister_mouseevent">nil unregister_mouseevent</span> <span class="comment">= unregister_mouseclick</span>
+│ ├─ <span id="tpt.register_keyevent">nil register_keyevent</span>     <span class="comment">= register_keypress</span>
+│ ├─ <span id="tpt.unregister_keyevent">nil unregister_keyevent</span>   <span class="comment">= register_keyevent</span>
+│ ├─ <span id="tpt.input">string input</span>              (string title, string message) <span class="comment">Prompt the user for input and return the data as string. Like <a href="javascript:(prompt('This is a demo'),null)">prompt()</a></span>
+│ ├─ <span id="tpt.message_box">nil message_box</span>           (string title, string message) <span class="comment">Show an user some information. Really generic. Like <a href="javascript:alert('Hello :D')">alert()</a></span>
+│ ├─ <span id="tpt.get_numOfParts">int get_numOfParts</span>        () <span class="comment">Returns the particle count right now (a maximum of 235008)</span>
+│ ├─ <span id="tpt.start_getPartIndex">nil start_getPartIndex</span>    () <span class="comment">Prepare getPartIndex in order to use the other two functions</span>
+│ ├─ <span id="tpt.set_property">bool next_getPartIndex</span>    () <span class="comment">True if there's a particle ID to be returned by getPartIndex</span>
+│ ├─ <span id="tpt.set_property">int<span class="editable">[index]</span> getPartIndex</span>   () <span class="comment">Returns the next used particle index (you can loop over this)</span>
+│ ├─ <span id="tpt.hud">nil/int hud</span>               (boolint state) <span class="comment">Show/Hide the HUD. (1 = Show). -1 returns current state.</span>
+│ ├─ <span id="tpt.newtonian_gravity">nil/int newtonian_gravity</span> (boolint state) <span class="comment">Set Newtonian Gravity. (1 = On). -1 returns current state.</span>
+│ ├─ <span id="tpt.ambient_heat">nil/int ambient_heat</span>      (boolint state) <span class="comment">Set Ambient Heat. (1 = On) -1 returns current state.</span>
+│ ├─ <span id="tpt.active_menu">nil/int active_menu</span>       (int menuID)     <span class="comment">Set active menu section. -1 returns current state.</span>
+│ ├─ <span id="tpt.decorations_enable">nil/int decorations_enable</span>(boolint state) <span class="comment">Toggle decorations. (1 = On) -1 returns current state.</span>
+│ ├─ <span id="tpt.display_mode">nil display_mode</span>          (int displayID)  <span class="comment">Set Display mode. </span>
+│ ├─ <span id="tpt.throw_error">nil throw_error</span>           (string text) <span class="comment">Display a message with an error of your choosing.</span>
+│ ├─ <span id="tpt.heat">nil/int heat</span>                  (boolint state) <span class="comment">Toggle Heat. (1 = On) -1 returns current state.</span>
+│ ├─ <span id="tpt.setfire">nil setfire</span>               (int strength<span class="editable">[=1]</span>) <span class="comment">Set strength of fire effects</span>
+│ ├─ <span id="tpt.setdebug">nil setdebug</span>              (int level) <span class="comment">Deprecated:  Set debug level. 1 is what pressing D produces, higher levels <em>used</em> to do something</span>
+│ ├─ <span id="tpt.setfpscap">nil setfpscap</span>             (int maxFPS<span class="editable">[=60]</span>) <span class="comment">Set max FPS</span>
+│ ├─ <span id="tpt.getscript">nil getscript</span>             (string author, string id) <span class="comment">Fetch a script from the TPT Script Index. The index has no known entries as of 2013-12-27.</span>
+│ ├─ <span id="tpt.setwindowsize">nil setwindowsize</span>         (int scale<span class="editable">[=1||2, d. 1]</span>, boolint fullscreen<span class="editable">[=0]</span>) <span class="comment">Set window size (scaled and fullscreen)</span>
+│ ├─ <span id="tpt.watertest">int watertest</span>             () <span class="comment">Toggle water equalization. Returns new state.</span>
+│ ├─ <span id="tpt.screenshot">nil screenshot</span>            () <span class="comment">Take a screenshot and save it as screenshot_####.png</span>
+│ ├─ <span id="tpt.element">int/string element</span>        (string element) <span class="comment">Return element ID from element name as string</span>
+│ │             └─             (element id) <span class="comment">Return element name as string from element ID</span>
+│ │
+│ ├─ <span id="tpt.get_clipboard">string get_clipboard</span>      () <span class="comment">Returns the current clipboard data as text</span>
+│ ├─ <span id="tpt.set_clipboard">nil set_clipboard</span>         (string data) <span class="comment">Sets the current clipboard data as text</span>
+│ ├─ <span id="tpt.element_func">nil element_func</span>          (element id, function onElement) <span class="comment">Make a particle update function. <a href="#properties.update_func">#update_func</a></span>
+│ │      └─                    (element id, function onElement, bool replace) <span class="comment">Replace the previous update function.</span>
+│ │
+│ └─ <span id="tpt.graphics_func">nil graphics_func</span>         (element id, function onDraw) <span class="comment">Make an element look fancy. <a href="#properties.graphics_func">#graphics_func</a></span>
+

@@ -1,0 +1,71 @@
+│  <span class="comment" id="renderer">Renderer API</span>
+│  <span class="comment">Everything to do with how particles look.</span>
+│
+│
+├ <span class="editable">renderer (ren) </span>
+│ │
+│ │  <span class="comment">Pixel drawing modes. See <a href="http://powdertoy.co.uk/System/External/MediaWiki/images/a/a3/Particle_Drawing_Modes.png">Particle_Drawing_Modes.png</a> for a quick reference.</span>
+│ ├─ <span id="ren.PMODE">PMODE </span><span class="editable">0x00000FFF</span>         <span class="comment">Bitmask to get display modes via binary AND</span>
+│ ├─ <span id="ren.PMODE">PMODE_NONE </span><span class="editable">0x00000000</span>    <span class="comment">Invisible as in totally invisible</span>
+│ ├─ <span id="ren.PMODE">PMODE_FLAT </span><span class="editable">0x00000001</span>    <span class="comment">Regular like Basic view</span>
+│ ├─ <span id="ren.PMODE">PMODE_BLOB </span><span class="editable">0x00000002</span>    <span class="comment">Blurry like Blob view</span>
+│ ├─ <span id="ren.PMODE">PMODE_BLUR </span><span class="editable">0x00000004</span>    <span class="comment">Blurry like wtrv</span>
+│ ├─ <span id="ren.PMODE">PMODE_GLOW </span><span class="editable">0x00000008</span>    <span class="comment">Glowy like PLUT with fancy view</span>
+│ ├─ <span id="ren.PMODE">PMODE_SPARK </span><span class="editable">0x00000010</span>   <span class="comment">Sparks used to be drawn more fancily</span>
+│ ├─ <span id="ren.PMODE">PMODE_FLARE </span><span class="editable">0x00000020</span>   <span class="comment">Flare like BOMB</span>
+│ ├─ <span id="ren.PMODE">PMODE_LFLARE </span><span class="editable">0x00000040</span>  <span class="comment">Large flare like DEST</span>
+│ ├─ <span id="ren.PMODE">PMODE_ADD </span><span class="editable">0x00000080</span>     <span class="comment">If particles are stacking then adds up the colours</span>
+│ ├─ <span id="ren.PMODE">PMODE_BLEND </span><span class="editable">0x00000100</span>   <span class="comment">Weaker than the above, does blendy magic.</span>
+│ │
+│ ├─ <span id="ren.PSPEC_STICKMAN">PSPEC_STICKMAN </span><span class="editable">0x00000200</span> <span class="comment">Only works for STKM, shows them as STKM</span>
+│ ├─ <span id="ren.OPTIONS">OPTIONS</span> <span class="editable">0x0000F000</span>        <span class="comment">A bit mask for the option bit. If you're making a custom render mode just always involve this.</span>
+│ ├─ <span id="ren.NO_DECO">NO_DECO</span> <span class="editable">0x00001000</span>        <span class="comment">politely refuses decorations be drawn upon it (like LCRY)</span>
+│ │
+│ ├─ <span id="ren.DECO_FIRE">DECO_FIRE</span> <span class="editable">0x00002000</span>      <span class="comment">enables changing the blur colour via deco</span>
+│ ├─ <span id="ren.FIREMODE">FIREMODE</span> <span class="editable">0x00FF0000</span>       <span class="comment">Bit mask for fire modes (below)</span>
+│ ├─ <span id="ren.FIRE_ADD">FIRE_ADD</span> <span class="editable">0x00100000</span>       <span class="comment">A pixel mode that makes it drawn like a fire particle. </span>
+│ ├─ <span id="ren.FIRE_BLEND">FIRE_BLEND</span> <span class="editable">0x00200000</span>     <span class="comment">^ with blendy magic.</span>
+│ │
+│ ├─ <span id="ren.EFFECT">EFFECT</span> <span class="editable">0xFF000000</span>
+│ ├─ <span id="ren.EFFECT_GRAVIN">EFFECT_GRAVIN</span> <span class="editable">0x01000000</span>  <span class="comment">Enables what PRTI does (particle sucky effect), however more life/ctype magic may be needed</span>
+│ ├─ <span id="ren.EFFECT_GRAVOUT">EFFECT_GRAVOUT</span> <span class="editable">0x02000000</span> <span class="comment">^ for PRTO</span>
+│ ├─ <span id="ren.EFFECT_LINES">EFFECT_LINES</span> <span class="editable">0x04000000</span>
+│ ├─ <span id="ren.EFFECT_DBGLINES">EFFECT_DBGLINES</span> <span class="editable">0x08000000</span>
+│ │  <span class="comment">Render mode flags all bundled up together</span> 
+│ ├─ <span id="ren.RENDER_EFFE">RENDER_EFFE </span><span class="editable">OPTIONS | PSPEC_STICKMAN | EFFECT | PMODE_SPARK | PMODE_FLARE | PMODE_LFLARE</span>
+│ ├─ <span id="ren.RENDER_FIRE">RENDER_FIRE </span><span class="editable">OPTIONS | PSPEC_STICKMAN | <span class="comment nodash">/*PMODE_FLAT |*/</span> PMODE_ADD | PMODE_BLEND | FIREMODE</span>
+│ ├─ <span id="ren.RENDER_GLOW">RENDER_GLOW </span><span class="editable">OPTIONS | PSPEC_STICKMAN | <span class="comment nodash">/*PMODE_FLAT |*/</span> PMODE_GLOW | PMODE_ADD | PMODE_BLEND</span>
+│ ├─ <span id="ren.RENDER_BLUR">RENDER_BLUR </span><span class="editable">OPTIONS | PSPEC_STICKMAN | <span class="comment nodash">/*PMODE_FLAT |*/</span> PMODE_BLUR | PMODE_ADD | PMODE_BLEND</span>
+│ ├─ <span id="ren.RENDER_BLOB">RENDER_BLOB </span><span class="editable">OPTIONS | PSPEC_STICKMAN | <span class="comment nodash">/*PMODE_FLAT |*/</span> PMODE_BLOB | PMODE_ADD | PMODE_BLEND</span>
+│ ├─ <span id="ren.RENDER_BASC">RENDER_BASC </span><span class="editable">OPTIONS | PSPEC_STICKMAN | PMODE_FLAT | PMODE_ADD | PMODE_BLEND | EFFECT_LINES</span>
+│ ├─ <span id="ren.RENDER_NONE">RENDER_NONE </span><span class="editable">OPTIONS | PSPEC_STICKMAN | PMODE_FLAT</span>
+│ │
+│ │  <span class="comment">What particle colors get drawn like - heat view or regular or whatnot</span>
+│ ├─ <span id="ren.COLOUR_HEAT">COLOUR_HEAT    </span><span class="editable">0x0000001</span>    <span class="comment">This is like Heat view.</span>
+│ ├─ <span id="ren.COLOUR_LIFE">COLOUR_LIFE    </span><span class="editable">0x0000002</span>    <span class="comment">Like Life display </span>
+│ ├─ <span id="ren.COLOUR_GRAD">COLOUR_GRAD    </span><span class="editable">0x0000004</span>    <span class="comment">Like Heat Gradient display</span>
+│ ├─ <span id="ren.COLOUR_BASC">COLOUR_BASC    </span><span class="editable">0x0000008</span>    <span class="comment">Like Basic display</span>
+│ ├─ <span id="ren.COLOUR_DEFAULT">COLOUR_DEFAULT </span><span class="editable">0x00000000</span> <span class="comment">Default whatever</span>
+│ │
+│ ├─ <span id="ren.DISPLAY_AIRC">DISPLAY_AIRC </span><span class="editable">0x00000001</span>  
+│ ├─ <span id="ren.DISPLAY_AIRP">DISPLAY_AIRP </span><span class="editable">0x00000002</span>   <span class="comment">Display air pressure</span>
+│ ├─ <span id="ren.DISPLAY_AIRV">DISPLAY_AIRV </span><span class="editable">0x00000004</span>   <span class="comment">Display air velocity</span>
+│ ├─ <span id="ren.DISPLAY_AIRH">DISPLAY_AIRH </span><span class="editable">0x00000008</span>   <span class="comment">Display air heat</span>
+│ ├─ <span id="ren.DISPLAY_AIR">DISPLAY_AIR  </span><span class="editable">0x0000000F</span>
+│ ├─ <span id="ren.DISPLAY_WARP">DISPLAY_WARP </span><span class="editable">0x00000010</span>   <span class="comment">Enable gravity wells</span>
+│ ├─ <span id="ren.DISPLAY_PERS">DISPLAY_PERS </span><span class="editable">0x00000020</span>   <span class="comment">Display Persistent lines</span>
+│ ├─ <span id="ren.DISPLAY_EFFE">DISPLAY_EFFE </span><span class="editable">0x00000040</span>
+│ │
+│ ├─ <span id="ren.renderModes">nil/table renderModes</span>     () <span class="comment">Get/set the render mode table</span>
+│ │            └─              (table renderModeTable) 
+│ ├─ <span id="ren.displayModes">nil/table displayModes</span>    () <span class="comment">Get/set the display mode table</span>
+│ │            └─              (table displayModeTable) 
+│ ├─ <span id="ren.colourMode">nil/int colourMode</span>        () <span class="comment">Get/set color mode</span>
+│ │  colorMode                 (int colourMode) 
+│ ├─ <span id="ren.decorations">nil/boolint decorations</span>   () <span class="comment">Get or set whether decorations are enabled.</span>
+│ │              └─            (boolint state)
+│ ├─ <span id="ren.grid">nil/int grid</span>              () <span class="comment">Get or set the grid display size</span>
+│ │          └─                (int size) 
+│ └─ <span id="ren.debugHUD">nil/int debugHUD</span>          () <span class="comment">Get/set whether or not debug HUD is visible. Replacement for tpt.setdebug</span>
+│            └─                (int level)
+

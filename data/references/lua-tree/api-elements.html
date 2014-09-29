@@ -1,0 +1,73 @@
+│  <span class="comment" id="elements">Elements API</span>
+│  <span class="comment">Everything to do with elements, adding them, modifying them, ...</span>
+│  <span class="comment">--</span>
+│  
+├ <span class="editable">elements (elem)</span>
+│ │ 
+│ │  <span class="comment">Particle movement types in .properties</span>
+│ ├─ <span id="elem.TYPE_PART">TYPE_PART</span> <span class="editable">0x00001</span>
+│ ├─ <span id="elem.TYPE_LIQUID">TYPE_LIQUID</span> <span class="editable">0x00002</span>
+│ ├─ <span id="elem.TYPE_SOLID">TYPE_SOLID</span> <span class="editable">0x00004</span>
+│ ├─ <span id="elem.TYPE_GAS">TYPE_GAS</span> <span class="editable">0x00008</span>
+│ ├─ <span id="elem.TYPE_ENERGY">TYPE_ENERGY</span> <span class="editable">0x00010</span>
+│ │ 
+│ │  <span class="comment">Particle properties</span>
+│ ├─ <span id="elem.PROP_CONDUCTS">PROP_CONDUCTS</span> <span class="editable">0x00020</span>
+│ ├─ <span id="elem.PROP_BLACK">PROP_BLACK</span> <span class="editable">0x00040</span>
+│ ├─ <span id="elem.PROP_NEUTPENETRATE">PROP_NEUTPENETRATE</span> <span class="editable">0x00080</span>
+│ ├─ <span id="elem.PROP_NEUTABSORB">PROP_NEUTABSORB</span> <span class="editable">0x00100</span>
+│ ├─ <span id="elem.PROP_NEUTPASS">PROP_NEUTPASS</span> <span class="editable">0x00200</span>
+│ ├─ <span id="elem.PROP_DEADLY">PROP_DEADLY</span> <span class="editable">0x00400</span>
+│ ├─ <span id="elem.PROP_HOT_GLOW">PROP_HOT_GLOW</span> <span class="editable">0x00800</span>
+│ ├─ <span id="elem.PROP_LIFE">PROP_LIFE</span> <span class="editable">0x01000</span>
+│ ├─ <span id="elem.PROP_RADIOACTIVE">PROP_RADIOACTIVE</span> <span class="editable">0x02000</span>
+│ ├─ <span id="elem.PROP_LIFE_DEC">PROP_LIFE_DEC</span> <span class="editable">0x04000</span>
+│ ├─ <span id="elem.PROP_LIFE_KILL">PROP_LIFE_KILL</span> <span class="editable">0x08000</span>
+│ ├─ <span id="elem.PROP_LIFE_KILL_DEC">PROP_LIFE_KILL_DEC</span> <span class="editable">0x10000</span>
+│ ├─ <span id="elem.PROP_SPARKSETTLE">PROP_SPARKSETTLE</span> <span class="editable">0x20000</span>
+│ ├─ <span id="elem.PROP_NOAMBHEAT">PROP_NOAMBHEAT</span> <span class="editable">0x40000</span>
+│ │  <span class="comment">Applies the CLNE effect: drawing with the brush over CLNE sets CLNE's ctype to something</span>
+│ ├─ <span id="elem.PROP_DRAWONCTYPE">PROP_DRAWONCTYPE</span> <span class="editable">0x80000</span>
+│ │  <span class="comment">Doesn't allow the CLNE effect to apply with this element</span>
+│ ├─ <span id="elem.PROP_NOCTYPEDRAW">PROP_NOCTYPEDRAW</span> <span class="editable">0x100000</span>
+│ │ 
+│ │  <span class="comment">.flags for how often update happens etcetera</span>
+│ ├─ <span id="elem.FLAG_STAGNANT">FLAG_STAGNANT</span> <span class="editable">0x1</span> <span class="comment">Update a bit less than usually</span>
+│ ├─ <span id="elem.FLAG_SKIPMOVE">FLAG_SKIPMOVE</span> <span class="editable">0x2</span> <span class="comment">Don't do movement checks</span>
+│ ├─ <span id="elem.FLAG_MOVABLE">FLAG_MOVABLE</span> <span class="editable">0x8</span> 
+│ │ 
+│ │  <span class="comment">.state values - element states</span>
+│ ├─ <span id="elem.ST_NONE">ST_NONE</span> <span class="editable">0</span>
+│ ├─ <span id="elem.ST_SOLID">ST_SOLID</span> <span class="editable">1</span>
+│ ├─ <span id="elem.ST_LIQUID">ST_LIQUID</span> <span class="editable">2</span>
+│ ├─ <span id="elem.ST_GAS">ST_GAS</span> <span class="editable">3</span>
+│ │ 
+│ │  <span class="comment">Element categories in the menu</span>
+│ ├─ <span id="elem.SC_WALL">SC_WALL</span> <span class="editable">0</span>
+│ ├─ <span id="elem.SC_ELEC">SC_ELEC</span> <span class="editable">1</span>
+│ ├─ <span id="elem.SC_POWERED">SC_POWERED</span> <span class="editable">2</span>
+│ ├─ <span id="elem.SC_SENSOR">SC_SENSOR</span> <span class="editable">3</span>
+│ ├─ <span id="elem.SC_FORCE">SC_FORCE</span> <span class="editable">4</span>
+│ ├─ <span id="elem.SC_EXPLOSIVE">SC_EXPLOSIVE</span> <span class="editable">5</span>
+│ ├─ <span id="elem.SC_GAS">SC_GAS</span> <span class="editable">6</span>
+│ ├─ <span id="elem.SC_LIQUID">SC_LIQUID</span> <span class="editable">7</span>
+│ ├─ <span id="elem.SC_POWDERS">SC_POWDERS</span> <span class="editable">8</span>
+│ ├─ <span id="elem.SC_SOLIDS">SC_SOLIDS</span> <span class="editable">9</span>
+│ ├─ <span id="elem.SC_NUCLEAR">SC_NUCLEAR</span> <span class="editable">10</span>
+│ ├─ <span id="elem.SC_SPECIAL">SC_SPECIAL</span> <span class="editable">11</span>
+│ ├─ <span id="elem.SC_LIFE">SC_LIFE</span> <span class="editable">12</span>
+│ ├─ <span id="elem.SC_TOOL">SC_TOOL</span> <span class="editable">13</span>
+│ ├─ <span id="elem.SC_DECO">SC_DECO</span> <span class="editable">14</span>
+│ │ 
+│ │  <span class="comment">Element IDs - one for every default element, as well as Lua elements according to namespace</span>
+│ ├─ <span id="elem.DEFAULT_PT_">DEFAULT_PT_<span class="editable">[DUST]</span></span>
+│ │
+│ ├─ <span id="elem.allocate">int allocate</span>              (string namespace, string name) <span class="comment">Sets up a space for a new element. Returns new element ID. </span>
+│ │  <span class="comment">Creates key elements.NAMESPACE_PT_NAME for the ID. </span>
+│ ├─ <span id="elem.free">nil free</span>                  (int elementID) <span class="comment">Deletes a given element from existence.</span>
+│ ├─ <span id="elem.loadDefault">nil loadDefault</span>           () <span class="comment">Deletes all new elements. Restores all default elements.</span>
+│ ├─ <span id="elem.element">nil/table element</span>         (int elementID) <span class="comment">Returns a table with the element's properties, to modify and set further on</span>
+│ │            └─              (int elementID, table properties) <span class="comment">Sets _all_ the properties of an element to ones from the table. Useful for element cloning.</span>
+│ └─ <span id="elem.property">nil/mixed property</span>        (int elementID, string property) <span class="comment">Returns an element's single property.</span>
+│              └─              (int elementID, string property, mixed value) <span class="comment">Sets an element's single property to value.</span>
+

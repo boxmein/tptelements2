@@ -1,0 +1,8 @@
+<h2 id="properties.AirDrag">float AirDrag</h2>
+
+<p>How much air the particle "drags" along with itself when moving. CFDS is a 
+magical constant that makes airdrag properly work with different pressure 
+grid sizes. Thus the definition should always be multiplied by that.</p>
+
+<p>For example,</p>
+<code>AirDrag = 0.004f * CFDS;</code>

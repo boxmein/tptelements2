@@ -1,0 +1,111 @@
+<span class="editable" id="property">Lua Property API</span>
+----------------
+
+An element has many properties as seen above in the tpt.parts[] array definition. 
+I've copied the list below for reference.
+
+Elements
+~~~~~~~~
+
+* Note: mul stands for multiplier. Used to determine the end result by
+  multiplying it to the determined one before application.
+
+* Check out <a href="#properties">the properties reference</a> for what each of these
+  does.
+
+<span class="editable" id="tpt.el">tpt.el.[inst].*</span>
+  │
+  ├─ <span id="tpt.el.name">char[4] name</span>
+  ├─ <span id="tpt.el.color">int color</span>
+  ├─ <span id="tpt.el.advection">float advection</span>
+  ├─ <span id="tpt.el.airdrag">float airdrag</span>
+  ├─ <span id="tpt.el.airloss">float airloss</span>
+  ├─ <span id="tpt.el.loss">float loss</span>
+  ├─ <span id="tpt.el.collision">float collision</span>
+  ├─ <span id="tpt.el.gravity">float gravity</span>
+  ├─ <span id="tpt.el.diffusion">float diffusion</span>
+  ├─ <span id="tpt.el.hotair">float hotair</span>
+  ├─ <span id="tpt.el.falldown">int falldown</span>
+  ├─ <span id="tpt.el.flammable">int flammable</span>
+  ├─ <span id="tpt.el.explosive">int explosive</span>
+  ├─ <span id="tpt.el.meltable">boolint meltable</span>
+  ├─ <span id="tpt.el.hardness">int hardness</span>
+  ├─ <span id="tpt.el.menu">boolint menu</span>
+  ├─ <span id="tpt.el.enabled">boolint enabled</span>
+  ├─ <span id="tpt.el.weight">int weight</span>
+  ├─ <span id="tpt.el.menusection">int menusection</span>
+  ├─ <span id="tpt.el.heat">float heat</span>
+  ├─ <span id="tpt.el.hconduct">int hconduct</span>
+  ├─ <span id="tpt.el.state">int state</span>
+  ├─ <span id="tpt.el.properties">int properties</span>
+  └─ <span id="tpt.el.description">string description</span>
+
+<span class="comment">Element transitions - check out <a href="#transitions">#transitions</a></span>
+<span class="editable" id="tpt.eltransition">tpt.eltransition.[inst].*</span>
+  │
+  ├─ <span id="tpt.eltransition.presHighValue">presHighValue</span>
+  ├─ <span id="tpt.eltransition.presHighType">presHighType</span>
+  ├─ <span id="tpt.eltransition.presLowValue">presLowValue</span>
+  ├─ <span id="tpt.eltransition.presLowType">presLowType</span>
+  ├─ <span id="tpt.eltransition.tempHighValue">tempHighValue</span>
+  ├─ <span id="tpt.eltransition.tempHighType">tempHighType</span>
+  ├─ <span id="tpt.eltransition.tempLowValue">tempLowValue</span>
+  └─ <span id="tpt.eltransition.tempLowType">tempLowType</span>
+
+<span class="comment">All sorts of properties - check out <a href="#properties">#properties</a></span>
+<span class="editable" id="elements.property">elements.property(*</span>
+  │  
+  ├─ <span id="elements.property.Name">string Name</span>
+  ├─ <span id="elements.property.Colour">int Colour/Color</span>
+  ├─ <span id="elements.property.MenuVisible">boolint MenuVisible</span>
+  ├─ <span id="elements.property.MenuSection">int MenuSection</span>
+  ├─ <span id="elements.property.Advection">float Advection</span>
+  ├─ <span id="elements.property.AirDrag">float AirDrag</span>
+  ├─ <span id="elements.property.AirLoss">float AirLoss</span>
+  ├─ <span id="elements.property.Loss">float Loss</span>
+  ├─ <span id="elements.property.Collision">float Collision</span>
+  ├─ <span id="elements.property.Gravity">float Gravity</span>
+  ├─ <span id="elements.property.Diffusion">float Diffusion</span>
+  ├─ <span id="elements.property.HotAir">float HotAir</span>
+  ├─ <span id="elements.property.Falldown">int Falldown</span>
+  ├─ <span id="elements.property.Flammable">boolint Flammable</span>
+  ├─ <span id="elements.property.Explosive">int Explosive</span>
+  ├─ <span id="elements.property.Meltable">boolint Meltable</span>
+  ├─ <span id="elements.property.Hardness">float Hardness</span>
+  ├─ <span id="elements.property.Weight">int Weight</span>
+  ├─ <span id="elements.property.Temperature">int Temperature</span>
+  ├─ <span id="elements.property.HeatConduct">int HeatConduct</span>
+  ├─ <span id="elements.property.Description">string Description</span>
+  ├─ <span id="elements.property.State">int State</span>
+  ├─ <span id="elements.property.Properties">int Properties</span>
+  │  <span class="comment">element transition related stuff - melting, freezing, pressure ...</span>
+  ├─ <span id="elements.property.LowPressure">int LowPressure</span> 
+  ├─ <span id="elements.property.LowPressureTransition">element LowPressureTransition</span>
+  ├─ <span id="elements.property.HighPressure">int HighPressure</span> 
+  ├─ <span id="elements.property.HighPressureTransition">element HighPressureTransition</span>
+  ├─ <span id="elements.property.LowTemperature">int LowTemperature</span> 
+  ├─ <span id="elements.property.LowTemperatureTransition">element LowTemperatureTransition</span>
+  ├─ <span id="elements.property.HighTemperature">int HighTemperature</span> 
+  ├─ <span id="elements.property.HighTemperatureTransition">element HighTemperatureTransition</span>
+  ├─ <span id="elements.property.Update">function(int index, int x, int y, int surround_space, int nt) Update</span>
+  └─ <span id="elements.property.Graphics">function(int index, int colr, int colg, int colb) Graphics</span>
+
+<span class="editable" id="particles">Particles</span>
+~~~~~~~~~
+
+(particle)
+  │
+  ├─ <span id="particles.type">int type</span>      <span class="comment">which element type is this?</span>
+  ├─ <span id="particles.life">int life</span>      <span class="comment">commonly used on various elements to induce timed death - can be set to automatically decrease</span>
+  ├─ <span id="particles.ctype">int ctype</span>     <span class="comment">commonly used as the "underlying type" of various elements like SPRK's original metal</span>
+  ├─ <span id="particles.x">float x</span>       <span class="comment">the element's X coordinate</span>
+  ├─ <span id="particles.y">float y</span>       <span class="comment">the element's X coordinate</span>
+  ├─ <span id="particles.vx">float vx</span>      <span class="comment">the element's horizontal speed (&gt;0 = right, &lt;0 = left)</span>
+  ├─ <span id="particles.vy">float vy</span>      <span class="comment">the element's vertical speed (&gt;0 = right, &lt;0 = left)</span>
+  ├─ <span id="particles.temp">float temp</span>    <span class="comment">the element's temperature in kelvins (displayed - 273.15)</span>
+  ├─ <span id="particles.pavg">float pavg[2]</span> <span class="comment">magic</span>
+  ├─ <span id="particles.flags">int flags</span>     <span class="comment">special flags that aren't saved - stuff like FLAG_STAGNANT</span>
+  ├─ <span id="particles.tmp">int tmp</span>       <span class="comment">generic use integer for an element - used lots for usage modes like FILT filter modes</span>
+  ├─ <span id="particles.tmp2">int tmp2</span>      <span class="comment">another generic use integer for an element - things like EXOT use it as colour storage</span>
+  └─ <span id="particles.dcolour">unsigned int dcolour</span> <span class="comment">the colour of the decorations drawn onto it: 0xAARRGGBB</span>
+

@@ -1,0 +1,14 @@
+// stuff for the code editor
+//# compass compile
+@import "base";
+
+#editor {
+  width: 100%;
+  min-height: 300px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+main h1 {
+  font-size: 1.3em;
+}

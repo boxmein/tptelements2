@@ -1,0 +1,22 @@
+│  <span class="comment" id="bit">Bit API</span>
+│  <span class="comment">Because Lua doesn't have one.</span>
+│  
+└ <span class="editable">bit</span>
+  │ 
+  ├─ <span id="bit.tobit">int tobit</span>                 (int input) <span class="comment">Normalize for binary operations. bit.* functions do it already.</span>
+  ├─ <span id="bit.tohex">string tohex</span>              (int input, int length) <span class="comment">Generate a hex string from the input.</span>
+  │ 
+  ├─ <span id="bit.bnot">int bnot</span>                  (int input) <span class="comment">Performs bitwise NOT (~input)</span>
+  ├─ <span id="bit.band">int band</span>                  (int... input) <span class="comment">Performs bitwise AND (input&amp;input) over all arguments.</span>
+  ├─ <span id="bit.bor">int bor</span>                   (int... input) <span class="comment">Performs bitwise OR (input|input) over all arguments. </span>
+  ├─ <span id="bit.bxor">int bxor</span>                  (int... input) <span class="comment">Performs bitwise XOR (input^input) over all arguments. </span>
+  │ 
+  ├─ <span id="bit.lshift">int lshift</span>                (int input, int count) <span class="comment">Performs a leftwards bit shift (input &lt;&lt; count). </span>
+  ├─ <span id="bit.rshift">int rshift</span>                (int input, int count) <span class="comment">Performs a rightwards bit shift (input &gt;&gt; count). </span>
+  ├─ <span id="bit.arshift">int arshift</span>               (int input, int count) <span class="comment">Performs a rightwards arithmetic bit shift (input &gt;&gt;&gt; count). </span>
+  │ 
+  ├─ <span id="bit.rol">int rol</span>                   (int input, int count) <span class="comment">Rotates a bit right by count bits. </span>
+  ├─ <span id="bit.ror">int ror</span>                   (int input, int count) <span class="comment">Rotates a bit right by count bits. </span>
+  │ 
+  └─ <span id="bit.bswap">int bswap</span>                 (int input) <span class="comment">Swaps endianness of the number.</span>
+

@@ -1,0 +1,135 @@
+│  <span class="comment" id="graphics">Graphics API</span>
+│  <span class="comment">Drawing other stuff onto the screen, like text or boxes.</span>
+│  <span class="comment">--</span>
+│  
+├ <span class="editable">graphics (gfx)</span>
+│ │ 
+│ ├─ <span id="gfx.WIDTH">WIDTH</span> <span class="comment">YRES (384) + MENUSIZE</span>
+│ ├─ <span id="gfx.HEIGHT">HEIGHT</span> <span class="comment">XRES (612) + BARSIZE</span>
+│ │ 
+│ ├─ <span id="gfx.textSize">int textSize</span>              (string text) <span class="comment">Get the width of a string when it's drawn in TPT's font </span>
+│ ├─ <span id="gfx.drawText">nil drawText</span>              (int x, int y, string text) <span class="comment">Draw text for one frame = tpt.drawtext</span>
+│ │      └─                    (int x, int y, string text, int r, int g, int b, int a)
+│ │ 
+│ ├─ <span id="gfx.drawLine">nil drawLine</span>              (int x1, int x2, int y1, int y2) <span class="comment">Draws a line for one frame</span>
+│ │      └─                    (int x1, int y1, int x2, int y2, int r, int g, int b, int a)
+│ ├─ <span id="gfx.drawRect">nil drawRect</span>              (int x, int y, int width, int height) <span class="comment">Draws a hollow rect for the next frame</span>
+│ │      └─                    (int x, int y, int width, int height, int r, int g, int b)
+│ ├─ <span id="gfx.fillRect">nil fillRect</span>              (int x, int y, int width, int height) <span class="comment">Draws a filled rect for the next frame</span>
+│ │      └─                    (int x, int y, int width, int height, int r, int g, int b, int a)
+│ ├─ <span id="gfx.drawCircle">nil drawCircle</span>            (int cx, int cy, int rx, int ry) <span class="comment">Draws an ellipse with two radiuses and a center point</span>
+│ │      └─                    (int cx, int cy, int rx, int ry, int r, int g, int b, int a)
+│ └─ <span id="gfx.fillCircle">nil fillCircle</span>            (int cx, int cy, int rx, int ry) <span class="comment">Draws an ellipse with two radiuses and a center point</span>
+│        └─                    (int cx, int cy, int rx, int ry, int r, int g, int b, int a)
+│ 
+│  <span class="comment" id="fileSystem">Filesystem API</span>
+│  <span class="comment">Used to secretly upload people's powder.pref onto a public server.</span>
+│  
+├ <span class="editable">fileSystem (fs)</span>
+│ │ 
+│ ├─ <span id="fs.list">nil/table list</span>            (string folder) <span class="comment">Lists the contents of a directory, be it other directories or files.</span>
+│ ├─ <span id="fs.exists">bool exists</span>               (string path) <span class="comment">Checks if a file exists</span>
+│ ├─ <span id="fs.isFile">bool isFile</span>               (string path) <span class="comment">Checks if the directory entry is a file (not a directory!)</span>
+│ ├─ <span id="fs.isDirectory">bool isDirectory</span>          (string path) <span class="comment">Checks if the directory entry is a directory (not a file!)</span>
+│ ├─ <span id="fs.makeDirectory">bool makeDirectory</span>        (string path) <span class="comment">Returns true on success.</span>
+│ ├─ <span id="fs.removeDirectory">bool removeDirectory</span>      (string path) <span class="comment">Returns true on success.</span>
+│ ├─ <span id="fs.removeFile">bool removeFile</span>           (string path) <span class="comment">Returns true on success.</span>
+│ ├─ <span id="fs.move">bool move</span>                 (string path, string newPath)
+│ └─ <span id="fs.copy">bool copy</span>                 (string path, string newPath)
+│ 
+│  <span class="comment" id="interface">Interface API</span>
+│  <span class="comment">We apologize for the inconvenience.</span>
+│ 
+├ <span class="editable">interface (ui)</span>
+│ │ 
+│ ├─ <span id="ui.showWindow">nil showWindow</span>                (Window w) <span class="comment">Opens a Window.</span>
+│ ├─ <span id="ui.closeWindow">nil closeWindow</span>               (Window w) <span class="comment">Closes a Window.</span>
+│ ├─ <span id="ui.addComponent">nil addComponent</span>              (Component c) <span class="comment">Adds a Component to the main window.</span>
+│ ├─ <span id="ui.removeComponent">nil removeComponent</span>           (Component c) <span class="comment">Removes a Component from the main window.</span>
+│ │  
+│ ├─ <span class="editable" id="ui.Component">Component</span> <span class="comment">Generic class for utilities</span>
+│ │  ├─ <span id="ui.Component:visible"> nil / bool :visible</span>      () <span class="comment">Gets/sets whether the component is visible</span>
+│ │  │              └─            (bool visible)
+│ │  │
+│ │  ├─ <span id="ui.Component:size"> nil / int,int :size</span>      () <span class="comment">Gets/sets the component's size</span>
+│ │  │                 └─         (int width, int height)
+│ │  │
+│ │  └─ <span id="ui.Component:position"> nil / int,int :position</span>  () <span class="comment">Gets/sets the component's position</span>
+│ │                    └─         (int x1, int y1)
+│ │ 
+│ ├─ <span class="editable" id="ui.Button">Button</span>
+│ │  │
+│ │  ├─ <span id="ui.Button:new">Button :new</span>            (int x, int y, int width, int height) <span class="comment">Creates a new button. Event listener needs to be attached later.</span>
+│ │  │         └─              (int x, int y, int width, int height, string text, string tooltip)
+│ │  ├─ <span id="ui.Button:action">nil :action</span>            (function onClick) <span class="comment">Attaches an event listener. Arguments: Button sender</span>
+│ │  ├─ <span id="ui.Button:text">nil/string :text</span>       () <span class="comment">Gets/sets the button's text</span>
+│ │  │             └─          (string text) 
+│ │  └─ <span id="ui.Button:enabled">nil/bool :enabled</span>      () <span class="comment">Get/set the button's enabled state</span>
+│ │              └─            (bool state) 
+│ │
+│ ├─ <span class="editable" id="ui.ProgressBar">ProgressBar</span>
+│ │  │
+│ │  │
+│ │  ├─ <span id="ui.Progressbar:new">ProgressBar :new</span>       (int x, int y, int width, int height, int progress, string status) <span class="comment">Creates a new instance.</span>
+│ │  ├─ <span id="ui.Progressbar:new">nil/int :progress</span>      () <span class="comment">Gets/sets the progress bar progress <span class="editable">[0:100]</span> -1 makes it scroll right slowly.</span>
+│ │  │          └─             (int progress) 
+│ │  └─ <span id="ui.Progressbar:new">nil/string :status</span>     () <span class="comment">Gets/sets the progress bar's status text.</span>
+│ │                └─          (string status)
+│ │ 
+│ ├─ <span class="editable" id="ui.Slider">Slider</span>
+│ │  │
+│ │  ├─ <span id="ui.Slider:new">Slider :new</span>            (int x, int y, int width, int height) <span class="comment">Creates a new instance. Specify the event listener and handler later on.</span>
+│ │  ├─ <span id="ui.Slider:onValueChanged">nil :onValueChanged</span>    (function onChange) <span class="comment">Attaches a onChanged event handler. Arguments: sender, value</span>
+│ │  ├─ <span id="ui.Slider:value">nil/int :value</span>         () <span class="comment">Gets/sets its value. </span>
+│ │  │          └─             (int value) 
+│ │  └─ <span id="ui.Slider:steps">nil/int :steps</span>         () <span class="comment">Gets/sets the amount of 'steps' the slider has.</span>
+│ │             └─             (int steps) 
+│ │ 
+│ ├─ <span class="editable" id="ui.Checkbox">Checkbox</span>
+│ │  │
+│ │  ├─ <span id="ui.Checkbox:new">Checkbox :new</span>          (int x, int y, int width, int height, <span class="editable">[string text = ""]</span>) <span class="comment">Creates a new instance.</span>
+│ │  ├─ <span id="ui.Checkbox:action">nil :action</span>            (function onAction) <span class="comment">Arguments: sender, value</span>
+│ │  ├─ <span id="ui.Slider:text">nil/string :text</span>       () <span class="comment">Gets/sets its text. </span>
+│ │  │             └─          (string text) 
+│ │  └─ <span id="ui.Slider:checked">nil/int :checked</span>       () <span class="comment">Gets/sets its checked state. </span>
+│ │             └─             (int checked) 
+│ │    
+│ │ 
+│ ├─ <span class="editable" id="ui.Label">Label</span>
+│ │  │
+│ │  ├─ <span id="ui.Label:new">Label :new</span>             (int x, int y, int width, int height, <span class="editable">[string text = ""]</span>)
+│ │  └─ <span id="ui.Label:text">nil/string :text</span>       () <span class="comment">Gets/sets its text. </span>
+│ │                └─          (string text) 
+│ │    
+│ │ 
+│ ├─ <span class="editable" id="ui.Textbox">Textbox</span>
+│ │  │
+│ │  ├─ <span id="ui.Textbox:new">Textbox :new</span>           (int x, int y, int width, int height <span class="editable">[, string text = "" [, string placeholder = "" ]</span>])
+│ │  ├─ <span id="ui.Textbox:onTextChanged">nil :onTextChanged</span>     (function onChange) <span class="comment">Arguments: sender</span>
+│ │  ├─ <span id="ui.Textbox:readonly">nil/bool   :readonly</span>   () <span class="comment">Gets/sets its readonly state. </span>
+│ │  │             └─          (string readonly) 
+│ │  └─ <span id="ui.Textbox:text">nil/string :text</span>       () <span class="comment">Gets/sets its text. </span>
+│ │                └─          (string text) 
+│ │ 
+│ │ 
+│ └─ <span class="editable" id="ui.Window">Window</span>
+│    │
+│    ├─ Window :new            (int x, int y, int width, int height) <span class="comment">A container element for components. Set x/y to -1 to center.</span>
+│    │ 
+│    ├─ <span id="ui.Window:onInitialized">nil :onInitialized</span>     (function func) <span class="comment">=> Function listener for initialization. Callback has no arguments.</span>
+│    ├─ <span id="ui.Window:onTick">nil :onTick</span>            (function func) <span class="comment">=> Every tick. Callback has no arguments.</span>
+│    ├─ <span id="ui.Window:onExit">nil :onExit</span>            (function func) <span class="comment">=> When the window closes. Callback has no arguments.</span>
+│    ├─ <span id="ui.Window:onTryOkay">nil :onTryOkay</span>         (function func) <span class="comment">=> </span>
+│    ├─ <span id="ui.Window:onDraw">nil :onDraw</span>            (function func) <span class="comment">=> When the window is drawn.</span>
+│    ├─ <span id="ui.Window:onMouseUp">nil :onMouseUp</span>         (function func) <span class="comment">=> Callback args: int x, int y, int button</span>
+│    ├─ <span id="ui.Window:onMouseDown">nil :onMouseDown</span>       (function func) <span class="comment">=> Callback args: int x, int y, int button</span>
+│    ├─ <span id="ui.Window:onMouseMove">nil :onMouseMove</span>       (function func) <span class="comment">=> Callback args: int x, int y, int dx, int dy</span>
+│    ├─ <span id="ui.Window:onMouseWheel">nil :onMouseWheel</span>      (function func) <span class="comment">=> Callback args: int x, int y, int d</span>
+│    ├─ <span id="ui.Window:onKeyPress">nil :onKeyPress</span>        (function func) <span class="comment">=> Callback args: int key, Uint16 character, bool shift, bool ctrl, bool alt</span>
+│    ├─ <span id="ui.Window:onKeyRelease">nil :onKeyRelease</span>      (function func) <span class="comment">=> Callback args: int key, Uint16 character, bool shift, bool ctrl, bool alt</span>
+│    ├─ <span id="ui.Window:onFocus">nil :onFocus</span>           (function func) <span class="comment">=> When receives focus. Callback has no arguments. </span>
+│    ├─ <span id="ui.Window:onTick">nil :onBlur</span>            (function func) <span class="comment">=> When loses focus. Callback has no arguments.</span>
+│    ├─ <span id="ui.Window:onTick">nil :onTryExit</span>         (function func) <span class="comment">=> When user attempts to exit the window. Callback has no arguments.</span>
+│    ├─ <span id="ui.Window:onTick">nil :addComponent</span>      (Component c) <span class="comment">Adds a Component to the Window.</span>
+│    └─ <span id="ui.Window:onTick">nil :removeComponent</span>   (Component c) <span class="comment">Removes a Component from the Window.</span>
+

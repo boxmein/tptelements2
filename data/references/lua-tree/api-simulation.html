@@ -1,0 +1,110 @@
+│  <span class="comment" id="simulation">Simulation API</span>
+│  <span class="comment">Everything to do with particles, pressure, heat, gravity, resetting temperature, whatnot.</span>
+│  
+│  
+├ <span class="editable">simulation (sim)</span>
+│ │
+│ │  <span class="comment">Usable in property getter/setter functions instead of property names - </span>
+│ │  <span class="comment">makes comparisons faster. </span>
+│ ├─ FIELD_CTYPE
+│ ├─ FIELD_DCOLOUR
+│ ├─ FIELD_FLAGS
+│ ├─ FIELD_LIFE
+│ ├─ FIELD_TEMP
+│ ├─ FIELD_TMP
+│ ├─ FIELD_TMP2
+│ ├─ FIELD_TYPE
+│ ├─ FIELD_VX
+│ ├─ FIELD_VY
+│ ├─ FIELD_X
+│ ├─ FIELD_Y
+│ │
+│ ├─ <span id="sim.partNeighbours">table partNeighbours</span>      (int x, int y, int radius) <span class="comment">Find list of particles around a center location, in a given radius.</span>
+│ │        partNeighbors       (int x, int y, int radius, int type) <span class="comment">Filter for an element with a certain type too.</span>
+│ ├─ <span id="sim.partChangeType">nil partChangeType</span>        (int index, int type) <span class="comment">Change particle type. Better than setting .type - </span>
+│ │                                                  <span class="comment">some elements need special properties to work and this will set them</span>
+│ ├─ <span id="sim.partCreate">nil partCreate</span>            (int x, int y, int type) <span class="comment">Create a particle.</span>
+│ ├─ <span id="sim.partProperty">nil/mixed partProperty</span>    (int index, string field) <span class="comment">Get/set a property on a particle. Like tpt.get_property only better.</span>
+│ │            └─              (int index, string field, mixed value) 
+│ ├─ <span id="partPosition">int, int partPosition</span>     (int index) <span class="comment">Get x,y from a given particle index</span>
+│ ├─ <span id="sim.partID">int partID</span>                (int x, int y) <span class="comment">Get index from a pair of coordinates (x, y)</span>
+│ ├─ <span id="sim.partKill">nil partKill</span>              (int index) <span class="comment">Delete a particle properly</span>
+│ │      └─                    (int x, int y)
+│ ├─ <span id="sim.pressure">nil/int pressure</span>          (int x, int y) <span class="comment">Get/set pressure at <span class="editable">[wall coordinates]</span> x,y</span>
+│ │          ├─                (int x, int y, int value)
+│ │          └─                (int x, int y, int width, int height, int value)
+│ ├─ <span id="sim.ambientHeat">nil/int ambientHeat</span>       (int x, int y) <span class="comment">Get/set ambient heat at <span class="editable">[wall coordinates]</span> x,y</span>
+│ │          ├─                (int x, int y, int value)
+│ │          └─                (int x, int y, int width, int height, int value)
+│ ├─ <span id="sim.velocityX">nil/int velocityX</span>         (int x, int y) <span class="comment">Get/set velocity (x) at <span class="editable">[wall coordinates]</span> x,y</span>
+│ │          ├─                (int x, int y, int value)
+│ │          └─                (int x, int y, int width, int height, int value)
+│ ├─ <span id="sim.velocityY">nil/int velocityY</span>         (int x, int y) <span class="comment">Get/set velocity (y) at <span class="editable">[wall coordinates]</span> x,y</span>
+│ │          ├─                (int x, int y, int value)
+│ │          └─                (int x, int y, int width, int height, int value)
+│ ├─ <span id="sim.gravMap">nil/int gravMap</span>           (int x, int y) <span class="comment">Get/set gravity at <span class="editable">[wall coordinates]</span> x,y</span>
+│ │          ├─                (int x, int y, int value)
+│ │          └─                (int x, int y, int width, int height, int value)
+│ ├─ <span id="sim.createParts">int createParts</span>           (int cx, int cy, int rx<span class="editable">[=d. 5]</span>, int ry<span class="editable">[=d. 5]</span>, 
+│ │                             int type<span class="editable">[=d. selectedl]</span>, int brush<span class="editable">[=d. circle]</span>, int flags<span class="editable">[=d. replace flags]</span>) 
+│ │                             <span class="comment">Creates multiple particles (like drawing with a brush!) </span>
+│ │                             <span class="comment">Set rx and ry to horizontal and vertical radius (ellipse brush). Returns how many particles were changed.</span>
+│ ├─ <span id="sim.createLine">int createLine</span>            (int x1, int y1, int x2, int y2, int rx, int ry, <span class="comment">Create line with createParts. Returns how many particles were changed.</span>
+│ │                             int type<span class="editable">[=d. selectedl]</span>, int brush<span class="editable">[=d. circle]</span>, int flags<span class="editable">[=d. replace flags]</span>)
+│ ├─ <span id="sim.createBox">int createBox</span>             (int x1, int y1, int x2, int y2, int type<span class="editable">[=d. selectedl]</span>, int flags<span class="editable">[=d. replace flags]</span>) <span class="comment">Filled box. Returns how many particles were changed.</span>
+│ ├─ <span id="sim.floodParts">int floodParts</span>            (int x, int y, int type, int cm, int flags<span class="editable">[=d. replace flags]</span>) <span class="comment">Flood fill particles. Returns how many particles were changed.</span>
+│ ├─ <span id="sim.createWalls">int createWalls</span>           (int cx, int cy, int rx<span class="editable">[=d. 0]</span>, int ry<span class="editable">[=d. 0]</span>, int type<span class="editable">[=d. 8]</span>) <span class="comment">Create walls. </span>
+│ │  <span class="comment">(wall types go from right to left, 1 for rightmost not delete). Returns how many particles were changed.</span>
+│ ├─ <span id="sim.createWallLine">nil createWallLine</span>        (int x1, int y1, int x2, int y2, int rx, int ry, int type<span class="editable">[=d. 8]</span>) <span class="comment">Create line with createParts                     </span>
+│ ├─ <span id="sim.createWallBox">nil createWallBox</span>         (int x1, int y1, int x2, int y2, int type<span class="editable">[=d. 8]</span>) <span class="comment">Wall boxes!</span>
+│ ├─ <span id="sim.floodWalls">int floodWalls</span>            (int x, int y, int type<span class="editable">[=d. 8]</span>, int bm) <span class="comment">Flood-fill walls! Returns how many particles were changed.</span>
+│ ├─ <span id="sim.toolBrush">int toolBrush</span>             (int x, int y, int rx, int ry, int tool, int brush<span class="editable">[=d. circle]</span>) <span class="comment">Apply a tool (AIR, VACU, GRAV, HEAT)</span>
+│ ├─ <span id="sim.toolLine">nil toolLine</span>              (int x1, int y1, int x2, int y2, int rx, int ry, int tool, int brush<span class="editable">[=d. circle]</span>) <span class="comment">Tool brush with line</span>
+│ ├─ <span id="sim.toolBox">nil toolBox</span>               (int x1, int y1, int x2, int y2, int tool, float strength<span class="editable">[=d. 1.0]</span>) <span class="comment">Tool via box</span>
+│ ├─ <span id="sim.decoBrush">nil decoBrush</span>             (int x, int y, int rx, int ry, int r, int g, int b, int a, int tool<span class="editable">[=d. DECO_DRAW]</span>, int brush<span class="editable">[=d. circle]</span>) <span class="comment">Draw decorations</span>
+│ ├─ <span id="sim.decoLine">nil decoLine</span>              (int x, int y, int rx, int ry, int r, int g, int b, int a, int tool<span class="editable">[=d. DECO_DRAW]</span>, int brush<span class="editable">[=d. circle]</span>)
+│ ├─ <span id="sim.decoBox">nil decoBox</span>               (int x1, int y1, int x2, int y2, int r, int g, int b, int a, int tool) <span class="comment">Draw a box of decorations.</span>
+│ ├─ <span id="sim.decoColor">nil decoColor</span>             () <span class="comment">Get/Set currently selected deco colour (0xAARRGGBB)</span>
+│ │      └─ = nil decoColour   (int colour<span class="editable">[=d. 0xFFFF0000]</span>)
+│ ├─ <span id="sim.clearSim">nil clearSim</span>              () <span class="comment">Clear everything on the save</span>
+│ ├─ <span id="sim.resetTemp">nil resetTemp</span>             () <span class="comment">Resets heat of every particle to room temperature (optionally, only metals et al)</span>
+│ │      └─                    (boolint onlyConductives)
+│ │
+│ ├─ <span id="sim.resetPressure">nil resetPressure</span>         () <span class="comment">Resets pressure everywhere, or at (x, y), or as a box</span>
+│ │      ├─                    (int x, int y)  
+│ │      └─                    (int x1, int y1, int width, int height)
+│ │
+│ ├─ <span id="sim.saveStamp">string saveStamp</span>          (int x, int y, int width, int height) <span class="comment">Saves a stamp and returns its cryptic name</span>
+│ ├─ <span id="sim.loadStamp">nil/int loadStamp</span>         (mixed id, int x, int y) <span class="comment">Loads a stamp by its cryptic name and places it at x, y. </span>
+│ │  <span class="comment">The ID can either be char<span class="editable">[10]</span> or integer. 1 if not OK, nil otherwise.</span>
+│ ├─ <span id="sim.loadSave">nil loadSave</span>              (int saveID, int timehistory) <span class="comment">Loads a save or its previous variant at the time (in exact seconds!) it was saved.</span>
+│ ├─ <span id="sim.getSaveID">nil/int getSaveID</span>         () <span class="comment">Returns the current save's ID.</span>
+│ ├─ <span id="sim.adjustCoords">int, int adjustCoords</span>     (int x, int y) <span class="comment">Set zoom window coordinates to here</span>
+│ ├─ <span id="sim.prettyPowders">nil/int prettyPowders</span>     () <span class="comment">Gets/Sets the powder noise thing</span>
+│ │          └─                (boolint state)
+│ ├─ <span id="sim.gravityGrid">nil/int gravityGrid</span>       () <span class="comment">Gets/Sets the gravity dot thing</span>
+│ │          └─                (boolint state)
+│ ├─ <span id="sim.edgeMode">nil/int edgeMode</span>          () <span class="comment">Gets/Sets the edge mode. 0 = Void. 1 = Solid.</span>
+│ │          └─                (int mode)
+│ ├─ <span id="sim.gravityMode">nil/int gravityMode</span>       () <span class="comment">Gets/Sets gravity mode. Vertical, Radial, Off, in some order.</span>
+│ │          └─                (int mode)
+│ ├─ <span id="sim.airMode">nil/int airMode</span>           () <span class="comment">Gets/Sets the air mode. On, No Velocity, No Pressure, No Update, Off in some order.</span>
+│ │          └─                (int mode)
+│ ├─ <span id="sim.waterEqualisation">nil/boolint waterEqualisation</span> () <span class="comment">Gets/Sets water equalization.</span>
+│ │              └─ = waterEqualization (boolint state) 
+│ ├─ <span id="sim.ambientAirTemp">nil/int ambientAirTemp</span>    () <span class="comment">Gets/Sets Ambient Heat mode's air temperature. Default: 293.15</span>
+│ │          └─                (int temp)
+│ │  <span id="sim.canMove"></span>
+│ ├─ <span id="sim.can_move">nil/int can_move</span>           (int src, int dst) <span class="comment">Gets/Sets what happens when element with ID (src) and element with ID (dst) try and move through each other</span>
+│ │          └─                (int src, int dst, int new_value) <span class="comment">Similar to C++ can_move[src][dst] - check out <a href="https://github.com/simtr/The-Powder-Toy/blob/master/src/simulation/Simulation.cpp#L1932">Simulation.cpp</a></span>
+│ │                                                              <span class="comment">0 = no move / bounce back, eg AMTR trying to move onto DMND</span>
+│ │                                                              <span class="comment">1 = swap particle locations, eg BHOL swaps elements into itself and then eats them </span>
+│ │                                                              <span class="comment">2 = two particles in the same space, eg two energy particles crossing</span>
+│ │                                                              <span class="comment">3 = other/handled elsewhere, eg PHOT trying to move into LCRY is actually handled in some update function</span>
+│ │ 
+│ ├─ <span id="sim.elementCount">int elementCount</span>          (element type) <span class="comment">Returns how many particles have this type on the screen.</span>
+│ ├─ <span id="sim.parts">iter parts</span>                () <span class="comment">Returns an iterator returning existing element indexes which you can <span class="editable">for index in sim.parts()</span> over.</span>
+│ ├─ <span id="sim.pmap">int16 pmap</span>                (int x, int y) <span class="comment">Returns the sim->pmap entry for a given location. The entry looks like index &gt;&gt; 8 | type</span>
+│ └─ <span id="sim.neighbours">iter neighbours</span>                (int x, int y, int rx, int ry) <span class="comment">Returns an object which you can for..in over, returning neighbor particles.  </span>
+│         └─ = neighbors
+

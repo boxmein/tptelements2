@@ -1,0 +1,13 @@
+<h2 id="properties.Identifier">string Identifier</h2>
+
+<p>Element's name on the Lua API. You usually set it to &lt;NAMESPACE&gt;_PT_&lt;ELEMENTNAME&gt;,
+in order to tell the executable what your element ID variable will be called
+inside Lua.</p>
+
+<p>An example value could be: </p>
+
+<code>Identifier = "DEFAULT_PT_BCOL";</code>
+
+<p>In Lua scripting, you can set it with:</p>
+
+<code>local element_id = elements.allocate("DEFAULT", "BCOL")</code>

@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    block head
+      title #{title} - tptelements
+      link(rel='stylesheet', href='/css/print.css', media='print')
+      link(rel='stylesheet', href='/css/screen.css', media='screen, projection')
+  body
+    block body
+      header
+        block header
+          include header
+      main
+        block content
+          p not yet implemented
+      footer
+        block footer
+          include footer
+      // jay queery
+      script(src='//code.jquery.com/jquery-1.11.0.min.js')

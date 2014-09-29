@@ -1,0 +1,20 @@
+<h2 id="properties.Update">int (*Update) (UPDATE_FUNC_ARGS)</h2>
+
+<p>This is a function that will be called for every particle once per tick. You can
+do various things here with the simulation and particles around you, and so this
+is an useful function for all sorts of updating purposes.</p>
+
+<p>You can see the various objects you can access from the function (and others 
+through them):</p>
+
+<p>(in C++):</p>
+<code>#define UPDATE_FUNC_ARGS Simulation* sim, int index, int x, int y, 
+                         int surround_space, int no_type, Particle *parts, 
+                         int pmap[YRES][XRES]</code>
+
+<p>(in Lua):</p>
+<code>number index, number x, number y, number surround_space, number nt</code>
+
+<p>Once you define your function, the assignment to this property is very simple:</p>
+
+<code>Update = &amp;Element_BCOL::update;</code>
