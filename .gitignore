@@ -1,5 +1,8 @@
 # I just told you to ignore the sass cache!
 .sass_cache/*
 .sass_cache
+
 node_modules
 public/css
+# you'll regenerate it anyway
+data/references/lua-reference.html
