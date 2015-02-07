@@ -7,3 +7,12 @@ public/css
 
 # you'll regenerate it anyway
 data/references/lua-reference.html
+data/search.json
+search.lzw
+
+# If you happen to place TPT in this directory (y'know, for the WIP generator)
+powder.pref
+Powder.exe
+# For WIP generator
+tmp
+
