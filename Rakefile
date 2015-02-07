@@ -1,10 +1,10 @@
 #!/usr/bin/ruby
 ## rake
 require 'fileutils'
-  puts "task :lua_reference"
+
 desc "Generate the Lua reference"
 task :lua_reference do
-
+  puts "task :lua_reference"
   puts "copying over temporary template files"
 
   # git + my computer both hate symlinking, apparently
