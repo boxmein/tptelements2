@@ -6,7 +6,6 @@
   <style>
 
     body {
-      /* shout out to Doxin */
       font-family: monospace;
       color: #EFEFEF;
       background-color: #222255;
@@ -87,7 +86,8 @@
     body.contrast .source.hidden { 
       height: 10px; 
     }
-
+    
+    /* hi doxin */
     body.doxin {
       font-family: 'monofur', monospace;
       font-size: 16px;
@@ -104,6 +104,11 @@ ops-reference.html
 ==================
 
 A walkthrough on the OPS save format TPT uses.
+
+Make sure to refer to the document actually detailing the save format - the 
+source code!
+<a href="https://github.com/simtr/The-Powder-Toy/blob/7d70c1f8d7278c4e9e47e9e817edcab8313eccb1/src/client/GameSave.cpp#L298">
+Link at time of writing</a>
 
 
 Index
@@ -128,35 +133,48 @@ Index
 
 
 Okay so a save file usually looks like a jumbled mess. That's because it's not 
-saved as valid text, rather binary. Lots of zeros and ones which your computer
-tries to piece together as comprehensible text. You're gonna need a hex editor 
-or similar (sublime text maybe?) that will edit your binary files for you. 
-The below thing is written from a save's hexadecimal contents which basically 
-means that I told the computer not to try to make the zeros-ones into letters 
-but rather show me what the zeros-ones actually look like.
+saved as valid text, as it represents most of its data in binary. Binary that
+Notepad(++) or any other conventional text editor tries to use as character 
+codes. 
 
-Not much to it, right?
-Let us decipher it!
+There are editing programs called hex editors however, which don't even 
+bother with the character codes and display the bits themselves. The most 
+convenient and common way said bits are displayed is hexadecimal (two letters 
+for a whole byte? sign me up!). You can read more on hexadecimal <a href="http://www.wikihow.com/Understand-Hexadecimal">here</a>.
 
+Sometimes very rarely hexadecimal numbers are represented with a leading or 
+trailing character sequence to make it clear that they are in hexadecimal.
 
+0x60 and 60h are two common notations, where both tell us that the number 60 is 
+in fact a hexadecimal number.
 
-4f 50 53 31 <i> - the magic number 'OPS1' which identifies the format </i>
+So let's open up an average save file with a hex editor, what'll we see?
 
-58 <i> - the 'saved in version X' number which says which version the save 
-    is up to. This one is decimal version 88. An error "Save from newer 
-    version" will pop up if this is larger than the compiled version's 
-    SAVE_VERSION.</i>
-04 <i> - the cell width of this save - this measures how wide a single wall 
-    block is. Keep as 4 unless you have a modded TPT version. 
-    An error "Incorrect CELL size" will pop up if this is larger than the 
-    compiled version's CELL.</i>
-99 <i> - how many wall blocks go on a horizontal line (= stage width / CELL, 
-    in vanilla TPT 612/4 = 153 = 0x99)</i>
-60 <i> - how many wall blocks go on a vertical line (= stage height / CELL, 
-    in vanilla TPT 384/4 = 96 = 0x60)</i>
-57 cc 0a 00 <i>- the next four bytes are the size of the compressed BSON 
-    structure in bytes. In a neat old reverse-the-order-of-the-bytes-but-
-    not-the-bits way.</i>
+4f 50 53 31 <i> - this is simply the text 'OPS1' in ASCII, which kind of 
+                  identifies which file it is for the computer. </i>
+
+58 <i> - This keeps track of which major version the save was created in.  
+    This one is TPT version 0x58 (convert that to decimal, it's 88!) 
+    You'll get an error "Save from newer version", if this number is bigger
+    than the SAVE_VERSION constant in your game code (or simply put, if the save
+    is from a newer version than you have, you get an error!)</i>
+04 <i> - the cell width of this save - this tells TPT how wide your wall blocks,
+    and the pressure, velocity, newtonian gravity, and ambient heat grids are.</i>
+99 <i> - how many wall blocks go on a horizontal line 
+   (you can calculate it by dividing the game width (WIDTH) with the cell width,
+   which in normal TPT is 612 / 4 = 153. 153 is represented in hexadecimal
+   as 99.)</i>
+60 <i> - how many wall blocks go on a vertical line.
+    (you can calculate it by dividing the game height with the cell width, which
+    in normal TPT is 384 / 4 = 96. 96 represented in hexadecimal is 60.) </i>
+57 cc 0a 00 <i> - the next four bytes represent how big the rest of the file is.
+              The size is represented as a regular C integer, except for the fact
+              that the first <b>byte</b> is the last, the second byte is the 
+              second-to-last in the file, and so on. </i>
+
+Below you can see the snippet of code that makes the first 12 bytes what they
+are.
+
 <div class="source hidden">
 outputData[0] = 'O';
 outputData[1] = 'P';
@@ -178,83 +196,115 @@ outputData[11] = finalDataLen >> 24;
 -----------------------
 
 
-The rest of the incoherent mess is bzip2-compressed and must be
-decompressed before handling it. 
-For the select few working in C/++ with libbz2, the code was compressed 
-like this:
+The rest of the file is compressed using bzip2, which you can easily decompress
+and explore. It's still not much good however, since the data inside /itself/ is
+also written using a binary format.
 
-<div class="source hidden">
-BZ2_bzBuffToBuffCompress(
-  (char*)(outputData+12), 
-  &amp;outputDataLen, 
-  (char*)finalData, 
-  bson_size(&amp;b), 
-  9, 
-  0, 
-  0);
-</div>
+You can in fact simply decompress the file using your favorite archive manager
+(that supports bzip2 data!), by stripping off the first 12 bytes (don't simply
+turn them to nulls!), and re-saving it as a ".bz2" file. Extracting that file
+will yield you the BSON data inside!
 
-For everyone else, the unpacked BSON is much much larger. As in, 
-691 KB large.
-To be short, you can navigate the tree I will show you below 
-with a BSON library. You can yourself read the specifications <a href="http://bsonspec.org/">online.</a>
-You can yourself decompress the BSON by cutting off the first 12 bytes
-of the .cps file and then running<b>"bzip2 -d9 &lt;save.cps&gt;"</b> with
-the bzip2 executable.
-<a href="./tea-pot.bson.txt">BSON hex dump (1.7 MB)</a>
+The binary format is called <a href="http://bsonspec.org/">BSON</a> - a portmanteau of <a href="http://json.org/">JSON</a> (Javascript Object 
+Notation) and binary. It's tinier and strictly typed, but those also make it a 
+bit more tedious to parse.
 
-The format of the BSON data structure looks kinda like this in JSON:
+The structure of data in BSON will look kind of like this, approximating with
+JSON syntax:
+
 { 
   <b>"origin"</b>: {
-
-    <b>"majorVersion"</b>: integer SAVE_VERSION, <i>// current TPT version that matters to the save server, eg 83</i>
-    <b>"minorVersion"</b>: integer MINOR_VERSION, <i>// TPT minor version - after the dot, eg 0</i>
-    <b>"buildNum"</b>: integer BUILD_NUM, <i>// TPT build version, always goes up, eg 272</i>
-    <b>"snapshotId"</b>: integer SNAPSHOT_ID, <i>// TPT snapshot version (rarely used), eg 1346881831</i>
-    <b>"releaseType"</b>: string IDENT_PLATFORM, <i>//TPT release type eg "WIN32"</b></i>
-    <b>"builtType"</b>: string IDENT_BUILD <i>// Build type eg "SSE3"</b></i>
+    <i>// The major version number of the game that the save was made in.
+    // MAJOR_VERSION -- looks like 81</i>
+    <b>"majorVersion"</b>: integer,
+    <i>// The minor version number (bugfixes, etc) of the game.
+    // MINOR_VERSION -- looks like 0</i>
+    <b>"minorVersion"</b>: integer,
+    <i>// The build index, which is basically like a never-ending counter that
+    // goes up every time TPT is compiled on the official build server.
+    // BUILD_NUM -- looks like 272</i>
+    <b>"buildNum"</b>: integer,
+    <i>// The snapshot ID, which is basically a Unix timestamp of when the 
+    // snapshot was compiled. It's rarely used, but you might still encounter it
+    // in the wild.
+    // SNAPSHOT_ID -- looks like 1346881831</i>
+    <b>"snapshotId"</b>: integer,
+    <i>// Release type, which is both an OS and an architecture identifier, all
+    // in one!
+    // IDENT_PLATFORM -- looks like "WIN32" or "LIN64"</i>
+    <b>"releaseType"</b>: string,
+    <i>// Build type, which tells you if the game was built on legacy or 
+    // SSE1/2/3 TPT.
+    // IDENT_BUILD -- looks like "SSE3" or "LEGACY"</i>
+    <b>"builtType"</b>: string
   },
-
-  <b>"waterEEnabled"</b>: boolean waterEEnabled, <i>// Water equalisation</i>
-  <b>"legacyEnable"</b>: boolean legacyEnable, <i>// Legacy mode - no heat?</i>
-  <b>"gravityEnable"</b>: boolean gravityEnable, <i>// Newtonian Gravity</i>
-  <b>"aheat_enable"</b>: boolean aheat_enable, <i>// Ambient Heat</i>
-  <b>"paused"</b>: boolean paused, <i>// paused? </i>
-  <b>"gravityMode"</b>: integer gravityMode, <i>// Vertical/Radial/No gravity</i>
-  <b>"airMode"</b>: integer airMode, <i>// Off/No pressure/No velocity/No update/All on</i>
-
-  <i>//<b>"leftSelectedElement"</b>: integer sl,
-  //<b>"rightSelectedElement"</b>: integer sr,
-  //<b>"activeMenu"</b>: int active_menu,</i>
-
-  <i>// following may or may not appear on the save file:
-  // There'll be a reference below for each of these</i>
-
-  <i>// Everything relating to particles</i>
-  <b>"parts"</b>: binary (subtype \x80),
-
-  <i>// Particle stacking array</i>
-  <b>"partsPos"</b>: binary (subtype \x80),
-
-  <i>// Wall map</i>
-  <b>"wallMap"</b>: binary (subtype \x80),
-
-  <i>// A special wall map for special fans</i>
-  <b>"fanMap"</b>: binary (subtype \x80),
-
-  <i>// Even more special map for soap connection points. Make sure to read the code.</i>
-  <b>"soapLinks"</b>: binary (subtype \x80),
   
-  <i>// Signs</i>
+  <i>// Is water equalization turned on?</i>
+  <b>"waterEEnabled"</b>: boolean,
+  
+  <i>// Is heat simulation turned /off/?</i>
+  <b>"legacyEnable"</b>: boolean,
+  
+  <i>// Is Newtonian Gravity turned on?</i>
+  <b>"gravityEnable"</b>: boolean,
+  
+  <i>// Is Ambient Heat turned on?</i>
+  <b>"aheat_enable"</b>: boolean,
+  
+  <i>// Was the game paused when saving?</i>
+  <b>"paused"</b>: boolean,
+
+  <i>// Which Gravity Mode to use?
+  // Vertical : 0 (the default)
+  // Off: 1
+  // Radial: 2</i>
+  <b>"gravityMode"</b>: integer,
+
+  <i>// Which Air Mode to use?
+  // All on : 0 (the default)
+  // No Pressure : 1 
+  // No Velocity : 2
+  // No Pressure &amp; Velocity : 3
+  // No Update : 4</i>
+  <b>"airMode"</b>: integer, 
+  
+  <i>// Not yet used: 
+  <i>// "leftSelectedElement": integer,
+  // "rightSelectedElement": integer,
+  // "activeMenu": integer,</i>
+
+  <i>// All of the next properties are totally optional. They might appear, 
+  // and usually they do, but they also might not.
+  
+  // All of them use some kind of freaky format so bear with me and scroll down
+  // to find the details for a particular format.</i>
+
+  <i>// Particles and all about them that's saved</i>
+  <b>"parts"</b>: binary (user-defined format!),
+
+  <i>// How many particles are in a specific position in the parts array</i>
+  <b>"partsPos"</b>: binary (user-defined format!),
+
+  <i>// Wall grid</i>
+  <b>"wallMap"</b>: binary (user-defined format!),
+
+  <i>// A special wall grid for fan-walls</i>
+  <b>"fanMap"</b>: binary (user-defined format!),
+
+  <i>// Even more special grid for soap connection points.
+  // I'll detail some parts, but make sure to check out the source code.</i>
+  <b>"soapLinks"</b>: binary (user-defined format!),
+  
+  <i>// Signs
+  // Signs are the only easy format, I'll detail them here:</i>
   <b>"signs"</b>: [
-    <i>// (each sign adds an object)</i>
+    <i>// (each sign adds an object into this array!)</i>
     {
-     <b>"text"</b>: string signs[i].text.c_str(),
-     <b>"justification"</b>: int signs[i].ju,
-     <b>"x"</b>: int signs[i].x,
-     <b>"y"</b>: int signs[i].y
+     <b>"text"</b>: string,
+     <b>"justification"</b>: integer,
+     <b>"x"</b>: integer,
+     <b>"y"</b>: integer
     }
-    <i>// ...</i>
   ]
 
   <i>// Palette of element IDs: 
@@ -263,6 +313,10 @@ The format of the BSON data structure looks kinda like this in JSON:
   "element name": element ID,
   ...
 }
+
+From here on in, I really suggest you look at the source code as well as read
+the description. I'm not always correct as I've learned, so you might find some
+quirks or details that I've left out or missed entirely.
 
 
 
@@ -336,17 +390,25 @@ if(wallData)
 }
 </div>
 
-Size: blockW * blockH (XRES/CELL * YRES/CELL)
+So, the size of this tremendous data structure is usually how many walls could
+fit into a save. You can use in-the-code constants and calculate it like this:
 
-Convert to a 2D structure like this: 
+(XRES*YRES)/CELL
+With official TPT, this value comes right at 58752 elements.
+
+First things first, convert the very linear data structure that walls are kept
+in into a more two-dimensional grid. Code like the below should suffice:
 
 <b>for (x = 0; x &lt; blockW, x++)
   for (y = 0; y &lt; blockH, y++)
     blockmap [x] [y] = wallData [y * blockW + x];</b>
 
-Wall types have to be converted from O_WL_* to WL_ by the <a href="https://github.com/simtr/The-Powder-Toy/blob/c4dcb37de40eda86871ba4e0992877528a208e39/src/simulation/SimulationData.h#L22-L57">#defines</a>.
-If the wall type is O_WL_FANHELPER then convert it to WL_FAN and place that in 
-its stead.
+Second, you'll have to convert every wall that uses old wall values <a href="https://github.com/simtr/The-Powder-Toy/blob/c4dcb37de40eda86871ba4e0992877528a208e39/src/simulation/SimulationData.h#L22-L57">(O_WL_*)</a> into
+newer wall values.
+
+Special case though: if the wall type is O_WL_FANHELPER, the new wall you should
+use instead of it is WL_FAN. 
+
 <div class="source hidden">
 if (blockMap[y][x]==O_WL_FAN||blockMap[y][x]==O_WL_FANHELPER)
   blockMap[y][x]=WL_FAN;
@@ -396,6 +458,9 @@ with 'none-walls' of index 0.
 
 The particle map format <a id="partsmap"></a>
 -----------------------
+
+Now for the real can of worms, the particle map! Try and follow through this,
+it's kind of a wild ride.
 
 <div class="source hidden">
 //Read particle data
@@ -878,24 +943,6 @@ the tmp set to the ctype and the ctype to 0.
 
 That's about it for custom properties.
 
-
-Signs <a id="signs"></a>
------
-
-Signs are saved in a super simple JSON array: 
-
-<b>"signs"</b>: [
-  <i>// (each sign adds an object)</i>
-  {
-   <b>"text"</b>: string signs[i].text.c_str(), <i>// this is just basically what the sign obviously says</i>
-   <b>"justification"</b>: int signs[i].ju, <i>// this is where the sign's pointing - not sure what values are used</i>
-   <b>"x"</b>: int signs[i].x, <i>//The position of the sign's little attachment point </i>
-   <b>"y"</b>: int signs[i].y
-  }
-  <i>// ...</i>
-]
-
-
 Soap links <a id="soaplinks"></a>
 ----------
 
@@ -928,16 +975,6 @@ purple and more black-on-white.</p>
   <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
   <script>
   $(document).ready(function() {
-    var hash = document.location.hash.split(',') || null;
-    if (hash[0])
-      $(document).scrollTop( $(hash[0]).offset().top );
-
-    if (hash.indexOf('contrast') !== -1) 
-      $(document.body).addClass('contrast');
-
-    if (hash.indexOf('doxin') !== -1)
-      $(document.body).addClass('doxin');
-
     $('.source').click(function(evt) {
       if($(this).hasClass('hidden')) {
         $(this).removeClass('hidden');
@@ -946,12 +983,7 @@ purple and more black-on-white.</p>
         $(this).addClass('hidden');
       }
     });
-    
-    if (localStorage && 
-        localStorage.tptelements_font !== undefined && 
-        localStorage.tptelements_font !== '') {
-      document.body.style.fontFamily = localStorage.tptelements_font;
-    } 
+    hljs.initHighlightingOnLoad();
   });
   </script>
 </body>
