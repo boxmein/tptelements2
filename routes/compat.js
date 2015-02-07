@@ -10,6 +10,7 @@ module.exports = function(router) {
   }
   
   redirectify('/OPS-reference.html', '/reference/save-format.html');
+  redirectify('/lua-reference.html', '/reference/lua-reference.html');
   redirectify('/experiments/ops_viewer', '/tools/save-viewer');
   redirectify('/data/*', '/reference/entries/*');
 };
