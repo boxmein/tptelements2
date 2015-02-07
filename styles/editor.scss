@@ -7,8 +7,31 @@
   min-height: 300px;
   margin-top: 15px;
   margin-bottom: 15px;
+  color: transparent;
+}
+
+#editor.ace_editor {
+  color: $textColor;
 }
 
 main h1 {
   font-size: 1.3em;
 }
+
+// 
+// The aside-bar
+// 
+#aside {
+  position: fixed;
+  top: 50px; 
+  right: 100px; 
+  min-width: 200px;
+
+  text-align: left;
+  padding: 5px;
+  white-space: normal;
+
+  background: $backgroundColor;
+  border: 1px solid lighten($backgroundColor, 5%);
+}
+
