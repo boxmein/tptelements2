@@ -44,4 +44,26 @@ module.exports = function(router, config) {
       });
     });
   });
+
+  var describables = [
+    // Element properties
+    'Advection','AirDrag','AirLoss','Collision','Colour','Description','Diffusion','Enabled','Explosive','Falldown','Flammable','Graphics','Gravity','Hardness','head','HeatConduct','HotAir','Identifier','Loss','Meltable','MenuSection','MenuVisible','Name','Properties','State','Temperature','Update','Weight'
+  ];
+  // Describe the keyword.
+  function describe(kw) {
+    if (describables.indexOf(kw) === -1) {
+      return;
+    }
+
+  }
+
+  router.get('/describe/:keyword', function(req, res) {
+    console.log(req.params.keyword);
+    res.send({
+      err: 'not yet implemented', 
+      keyword: req.params.keyword,
+      description: '',
+      link: '#'
+    });
+  });
 };
