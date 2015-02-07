@@ -33,4 +33,47 @@ task :compile_stylesheets do
   puts `compass compile`
 end
 
+
+
+
+
+
+desc "Generate the search page's data file"
+task :search_data do
+  puts "task :search_data"
+
+  puts "minifying and compressing search.json..."
+  puts `json-minify data/search.json > ./intermediate.json`
+  puts `node "tools/pack search.json with lzw.js" ./intermediate.json > ./search.lzw`
+  
+  FileUtils.rm "./intermediate.json"
+end
+
+
+
+
+
+desc "Dump Lua variables in TPT (set ENV[TPT]=path to tpt)"
+task :dump_luatree do 
+  FileUtils.mkdir "tmp"
+  FileUtils.cp "tools/dump tpt api.lua", "tmp/autorun.lua"
+
+  raise unless ENV['TPT']
+
+  FileUtils.cp ENV['TPT'], "./tmp"
+
+  puts `tmp/Powder`
+
+  # tpt sometimes removes it
+  FileUtils.cp "tmp/stdout.txt", "tmp/dump.txt"
+end
+
+desc "Generate code trees for all the APIs (WIP)"
+task :make_api_trees do raise end
+
+desc "Run the TPTElements2 server"
+task :run do 
+  puts "use npm start now!"
+end
+
 task :default => %w(compile_stylesheets lua_reference run)
