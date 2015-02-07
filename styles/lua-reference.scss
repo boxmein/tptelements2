@@ -145,7 +145,7 @@ h2:hover {
 // Bright mode! 
 // 
 body {
-  &.bright, &.bright .aside {
+  &.bright, &.bright #aside {
     color: $bright_fg;
     background-color: $bright_bg;
   }
