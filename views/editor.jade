@@ -6,15 +6,10 @@ block append head
 block content
   h1 Code Editor
   #editor=template
+  #aside.hidden
 
 block append body
   script(src='/ace-editor/src-min-noconflict/ace.js', type='text/javascript', charset='utf-8')
+  script(src='/js/editor-additions.js', type='text/javascript', charset='utf-8')
   script.
-    var editor = ace.edit('editor');
-    editor.setTheme('ace/theme/mysolarized');
-    editor.getSession().setMode('ace/mode/#{language}');
-    editor.setOptions({
-      maxLines: 10000
-    });
-    editor.resize();
-    editor.focus();
+    startup($, ace, '#{language}');
