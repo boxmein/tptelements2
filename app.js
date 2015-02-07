@@ -1,3 +1,5 @@
+// woot! stuff!
+//# npm start
 var express = require('express');
 var path = require('path');
 var favicon = require('static-favicon');
