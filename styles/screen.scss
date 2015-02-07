@@ -32,3 +32,16 @@ h1 {
   &:visited { color: inherit; }
   &:link { color: inherit; }
 }
+
+a {
+  &:hover { color: darken($textColor, 5%); text-decoration: none; }
+  &:visited { color: inherit; }
+  &:link { color: inherit; }
+  &.noul { text-decoration: none; }
+}
+
+.lastmod {
+  color: #162D3A;
+  text-align: center;
+}
+
