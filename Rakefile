@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 ## rake
 require 'fileutils'
-
+  puts "task :lua_reference"
 desc "Generate the Lua reference"
 task :lua_reference do
 
@@ -22,10 +22,15 @@ task :lua_reference do
   true
 end
 
+
+
+
 desc "Compile all SASS stylesheets"
 task :compile_stylesheets do
+  puts "task :compile_stylesheets"
+
   puts "invoking compass to do it for us"
   puts `compass compile`
 end
 
-task :default => %w(compile_stylesheets lua_reference)
+task :default => %w(compile_stylesheets lua_reference run)
