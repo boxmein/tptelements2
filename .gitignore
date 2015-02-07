@@ -13,6 +13,9 @@ search.lzw
 # If you happen to place TPT in this directory (y'know, for the WIP generator)
 powder.pref
 Powder.exe
+
 # For WIP generator
 tmp
 
+# shh! future feature
+public/ace-editor/src-min-noconflict/mode-luatpt.js
