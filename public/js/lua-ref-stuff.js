@@ -2,7 +2,7 @@ $(document).ready(function() {
   'use strict';
 
   // Hash hover witchcraft
-  $(".content > [id]").hover(function(evt) {
+  $("main > [id]").click(function(evt) {
     var scr = $(document.body).scrollTop();
     document.location.hash = '#' + evt.target.id;
     $(document.body).scrollTop(scr);
@@ -36,7 +36,6 @@ $(document).ready(function() {
 
   window.onscroll = function() {
     var st = $(document.body).scrollTop();
-    console.log(st, start, stop, st>start-50, st>stop-50);
 
     // if we've scrolled to the tree
     if (st > start - 50 && $aside.stuck) 
