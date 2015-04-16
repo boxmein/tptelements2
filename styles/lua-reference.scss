@@ -6,7 +6,7 @@ $bright_fg: black;
 $bright_highlight: #000077;
 
 $editableColor: $cyan;
-$commentColor: lighten($backgroundColor, 20%);
+$commentColor: lighten($backgroundColor, 30%);
 
 // start the content after the mega-top-thing
 main {
@@ -175,4 +175,4 @@ body {
 
 code {
   white-space: pre;
-}
+}}
