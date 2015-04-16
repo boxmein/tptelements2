@@ -36,7 +36,7 @@ h1 {
 }
 
 ol, ul {
-  margin: 0;  
+  margin: 0;
   padding: 0;
 }
 
@@ -47,7 +47,7 @@ ol, ul {
   background-color: $bright_bg;
   color: $bright_fg;
 }
- 
+
 span.color {
   &.r {
   color: $red;
@@ -60,13 +60,13 @@ span.color {
   }
 }
 
-h2, 
+h2,
 span[id] {
   font-size: 1em;
   color: $cyan;
 }
 
-body.bright h2, 
+body.bright h2,
 body.bright span[id] {
   color: $bright_highlight;
   background-color: inherit;
@@ -86,20 +86,20 @@ h2:hover {
   }
 }
 
-.tree, 
+.tree,
 .properties-overview,
 .notes {
   white-space: pre;
 }
 
 
-// 
+//
 // The aside-bar
-// 
+//
 #aside {
   position: fixed;
-  top: 50px; 
-  right: 100px; 
+  top: 50px;
+  right: 100px;
   min-width: 200px;
 
   text-align: left;
@@ -108,7 +108,7 @@ h2:hover {
 
   background: $backgroundColor;
   border: 1px solid lighten($backgroundColor, 5%);
-  
+
   ul {
     padding: -5px;
     margin: 0;
@@ -126,7 +126,7 @@ h2:hover {
   }
 
   @media (max-width: 700px) {
-    position: static; 
+    position: static;
     margin: 5px 0;
   }
 
@@ -141,9 +141,9 @@ h2:hover {
   // top will be set with javascript
 }
 
-// 
-// Bright mode! 
-// 
+//
+// Bright mode!
+//
 body {
   &.bright, &.bright #aside {
     color: $bright_fg;
