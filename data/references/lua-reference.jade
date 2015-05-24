@@ -65,9 +65,14 @@ block content
     include lua-tree/element-properties/Update.html
     include lua-tree/element-properties/Weight.html
 
+  //- part 4: misc
+  .misc
+    include lua-tree/pixel-modes.html
+    include lua-tree/goltable.html
+
   p.
     Good luck coding! Hope this will come in handy.
-    ~boxmein 
+    ~boxmein
 
 block append header
   .aside#aside
@@ -93,6 +98,7 @@ block append header
       li: a(href='#properties') ^ properties.
       li: a(href='#properties.graphics_func') Graphics
       li: a(href='#properties.update_func') Update
+      li: a(href='#goltable') LIFE ctypes
 
 block append body
   script(src='/highlightjs/highlight.pack.js')
@@ -100,6 +106,6 @@ block append body
   script.
     hljs.initHighlightingOnLoad();
 
-  //- last modified :D 
+  //- last modified :D
   - var x = new Date().toString();
-  .lastmod Last Modified: #{x} 
+  .lastmod Last Modified: #{x}
