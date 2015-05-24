@@ -1,45 +1,53 @@
-<span id="properties.pixel_mode">Pixel modes</span>
------------
+<span id="properties.pixel_mode">Pixel modes</span><br>
+-----------<br>
+<p>There's a handy <a href="http://powdertoy.co.uk/Wiki/W/File:Particle_Drawing_Modes.png.html">pixel mode image</a> on the wiki, so definitely
+check it out!</p>
 
-There's a handy <a href="http://powdertoy.co.uk/Wiki/W/File:Particle_Drawing_Modes.png.html">pixel mode image</a> on the wiki, so definitely
-check it out!
+<p>Also note that PRTI/PRTO effects cannot be applied without some witchcraft applied to the ctype
+and life values of the element. Check out Renderer::render_parts if really interested.</p>
 
-Also note that PRTI/PRTO effects cannot be applied without some witchcraft applied to the ctype 
-and life values of the element. Check out Renderer::render_parts if really interested.
-
-pixel_mode
+<pre><code class="hljs lua">pixel_mode
   │
-  │ <span class="comment nodash">Prevents anything from being drawn. Kinda like WARP.</span>
-  ├─ PMODE_NONE     <span class="editable">0x00000000</span>
-  │ <span class="comment nodash">Draw an opaque pixel, aka transparency is not applied.</span>
-  ├─ PMODE_FLAT     <span class="editable">0x00000001</span>
-  │ <span class="comment nodash">Adds a blobby effect, like you were using blob (5) display mode</span>
-  ├─ PMODE_BLOB     <span class="editable">0x00000002</span>
-  │ <span class="comment nodash">Liquids in Fancy display apply this. Adds a blur and makes the pixels remain sharp as well.</span>
-  ├─ PMODE_BLUR     <span class="editable">0x00000004</span>
-  │ <span class="comment nodash">Plain ol' glow. Stuff like ARAY (In fancy display) use this.</span>
-  ├─ PMODE_GLOW     <span class="editable">0x00000008</span>
-  │ <span class="comment nodash">Kinda dim PMODE_FLARE - GBMB uses this - beams running horizontally and vertically + glow to emphasize brightness</span>
-  ├─ PMODE_SPARK    <span class="editable">0x00000010</span>
-  │ <span class="comment nodash">Regularly bright PMODE_FLARE - BOMB uses this - beams running horizontally and vertically</span>
-  ├─ PMODE_FLARE    <span class="editable">0x00000020</span>
-  │ <span class="comment nodash">Large and super bright PMODE_FLARE - DEST is the only thing using this.</span>
-  ├─ PMODE_LFLARE   <span class="editable">0x00000040</span>
-  │ <span class="comment nodash">This adds some magic to the equation to make multiple layered particles add up to be brighter than one particle alone.</span>
-  ├─ PMODE_ADD      <span class="editable">0x00000080</span>
-  │ <span class="comment nodash">Even more magical than PMODE_ADD, somehow better for OpenGL? </span>
-  ├─ PMODE_BLEND    <span class="editable">0x00000100</span>
-  │ <span class="comment nodash">Something very STKM specific that won't work anywhere except on STKM</span>
-  ├─ PSPEC_STICKMAN <span class="editable">0x00000200</span>
-  │ <span class="comment nodash">Disables decorations on this element (LCRY does this as well as some magic to paint itself colours)</span>
-  ├─ NO_DECO        <span class="editable">0x00001000</span>
-  │ <span class="comment nodash">The fire/blurriness colors get decorations too. Gasses might use this.</span>
-  ├─ DECO_FIRE      <span class="editable">0x00002000</span>
-  │ <span class="comment nodash">Adds fire colors around the element (although weak ones - LAVA and LIGH lines use that)</span>
-  ├─ FIRE_ADD       <span class="editable">0x00010000</span> -- adds a weak fire effect around the element (ex. LAVA/LIGH)
-  │ <span class="comment nodash">Adds more impressive fire colors around the element. Gasses use this for their coloring.</span>
-  ├─ FIRE_BLEND     <span class="editable">0x00020000</span>
-  │ <span class="comment nodash">PRTI/PRTO effect flags: note that they need magic life/ctype variables!</span>
-  ├─ EFFECT_GRAVIN  <span class="editable">0x01000000</span>
-  └─ EFFECT_GRAVOUT <span class="editable">0x02000000</span>
-
+  │ -- Prevents anything from being drawn. Kinda like WARP.
+  ├─ PMODE_NONE     0x00000000
+  │ -- Draw an opaque pixel, aka transparency is not applied.
+  ├─ PMODE_FLAT     0x00000001
+  │ -- Adds a blobby effect, like you were using blob (5) display mode
+  ├─ PMODE_BLOB     0x00000002
+  │ -- Liquids in Fancy display apply this. Adds a blur and makes the pixels
+  │ -- remain sharp as well.
+  ├─ PMODE_BLUR     0x00000004
+  │ -- Plain ol' glow. Stuff like ARAY (In fancy display) use this.
+  ├─ PMODE_GLOW     0x00000008
+  │ -- Kinda dim PMODE_FLARE - GBMB uses this - beams running horizontally and
+  │ -- vertically + glow to emphasize brightness
+  ├─ PMODE_SPARK    0x00000010
+  │ -- Regularly bright PMODE_FLARE - BOMB uses this - beams running
+  │ -- horizontally and vertically
+  ├─ PMODE_FLARE    0x00000020
+  │ -- Large and super bright PMODE_FLARE - DEST is the only thing using this.
+  ├─ PMODE_LFLARE   0x00000040
+  │ -- This adds some magic to the equation to make multiple layered particles
+  │ -- add up to be brighter than one particle alone.
+  ├─ PMODE_ADD      0x00000080
+  │ -- Even more magical than PMODE_ADD, somehow better for OpenGL?
+  ├─ PMODE_BLEND    0x00000100
+  │ -- Something very STKM specific that won't work anywhere except on STKM
+  ├─ PSPEC_STICKMAN 0x00000200
+  │ -- Disables decorations on this element (LCRY does this as well as some
+  │ -- magic to paint itself colours)
+  ├─ NO_DECO        0x00001000
+  │ -- The fire/blurriness colors get decorations too. Gasses might use this.
+  ├─ DECO_FIRE      0x00002000
+  │ -- Adds fire colors around the element (although weak ones - LAVA and LIGH
+  │ -- lines use that)
+  ├─ FIRE_ADD       0x00010000 -- adds a weak fire effect around the element
+  │ -- (ex. LAVA/LIGH)
+  │ -- Adds more impressive fire colors around the element. Gasses use this
+  │ -- for their coloring.
+  ├─ FIRE_BLEND     0x00020000
+  │ -- PRTI/PRTO effect flags: note that they need magic life/ctype
+  │ -- variables!
+  ├─ EFFECT_GRAVIN  0x01000000
+  └─ EFFECT_GRAVOUT 0x02000000
+</code></pre>
