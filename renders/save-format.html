@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OPS reference</title>
+  <style>
+
+    body {
+      font-family: monospace;
+      color: #EFEFEF;
+      background-color: #222255;
+      max-width: 95%;
+      font-size: 14px;
+    }
+
+
+    #content {
+      white-space: pre-wrap;
+      padding: 2% 10%;
+    }
+
+    #content {
+      position: static;
+      background-color: #222255; 
+    }
+
+    .source {
+      background-color: #111134;
+      margin: 10px 0;
+      padding: 1%;
+      display: inline-block;
+    }
+    .source:before {
+      color: #575799;
+      content: 'Hide source';
+    }
+    .source.hidden:before {
+      color: #575799;
+      content: 'Show source';
+    }
+
+    .source.hidden {
+      color: #111134;
+      overflow: hidden;
+      height: 15px;
+    }
+    
+    a {
+      color: inherit;
+    }
+    a:visited {
+      color: inherit;
+    }
+    i {
+      font-style: normal;
+      color: #575799;
+    }
+    b {
+      font-weight: normal;
+      color: #7474DB;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      width: 5px;
+      background-color: #575799;
+    }
+    ::-webkit-scrollbar-thumb:horizontal {
+      height: 5px;
+    }
+
+    @media screen and (max-width: 768px) {
+      #content {
+        padding: 0 5%;
+      }
+      body {
+        max-width: 100%;
+      }
+    }
+
+    body.contrast, body.contrast #content, body.contrast .source, 
+    body.contrast .source:before, body.contrast .source.hidden:before, 
+    body.contrast .source.hidden, body.contrast i, body.contrast b {
+      background-color: white;
+      color: black;
+    }
+    body.contrast .source.hidden { 
+      height: 10px; 
+    }
+    
+    /* hi doxin */
+    body.doxin {
+      font-family: 'monofur', monospace;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="content">
+
+// TPTElements for <a href="/editor/c++">C++</a> / <a href="/editor/lua">Lua</a> / <a href="/editor/c">C</a>
+// References for <a href="/tptelements/#reference">Element properties</a> / <a href="/reference/lua-reference.html">The Lua API</a> / <a href="/reference/save-format.html">OPSv1</a>
+
+ops-reference.html
+==================
+
+A walkthrough on the OPS save format TPT uses.
+
+Make sure to refer to the document actually detailing the save format - the 
+source code!
+<a href="https://github.com/simtr/The-Powder-Toy/blob/7d70c1f8d7278c4e9e47e9e817edcab8313eccb1/src/client/GameSave.cpp#L298">
+Link at time of writing</a>
+
+
+Index
+=====
+
+1. <a href="#bytes">Bytes of OPS1</a>
+2. <a href="#bson">The BSON save format</a>
+3. Various subformats
+  3.1 <a href="#wallmap">The wallmap subformat for walls</a>
+    3.1.1 <a href="#fanmap">The fan-map subformat for fan data</a>
+  3.2 <a href="#partsmap">The parts-map and parts-position subformat for particles</a>
+    3.2.1 <a href="#savedparts">The particle properties saved</a>
+  3.3 <a href="#signs">The sign-map subformat for signs</a>
+  3.4 <a href="#soaplinks">The soap-link subformat for soap bubbles</a>
+
+
+
+
+
+1. Bytes of OPS1 <a id="bytes"></a>
+----------------
+
+
+Okay so a save file usually looks like a jumbled mess. That's because it's not 
+saved as valid text, as it represents most of its data in binary. Binary that
+Notepad(++) or any other conventional text editor tries to use as character 
+codes. 
+
+There are editing programs called hex editors however, which don't even 
+bother with the character codes and display the bits themselves. The most 
+convenient and common way said bits are displayed is hexadecimal (two letters 
+for a whole byte? sign me up!). You can read more on hexadecimal <a href="http://www.wikihow.com/Understand-Hexadecimal">here</a>.
+
+Sometimes very rarely hexadecimal numbers are represented with a leading or 
+trailing character sequence to make it clear that they are in hexadecimal.
+
+0x60 and 60h are two common notations, where both tell us that the number 60 is 
+in fact a hexadecimal number.
+
+So let's open up an average save file with a hex editor, what'll we see?
+
+4f 50 53 31 <i> - this is simply the text 'OPS1' in ASCII, which kind of 
+                  identifies which file it is for the computer. </i>
+
+58 <i> - This keeps track of which major version the save was created in.  
+    This one is TPT version 0x58 (convert that to decimal, it's 88!) 
+    You'll get an error "Save from newer version", if this number is bigger
+    than the SAVE_VERSION constant in your game code (or simply put, if the save
+    is from a newer version than you have, you get an error!)</i>
+04 <i> - the cell width of this save - this tells TPT how wide your wall blocks,
+    and the pressure, velocity, newtonian gravity, and ambient heat grids are.</i>
+99 <i> - how many wall blocks go on a horizontal line 
+   (you can calculate it by dividing the game width (WIDTH) with the cell width,
+   which in normal TPT is 612 / 4 = 153. 153 is represented in hexadecimal
+   as 99.)</i>
+60 <i> - how many wall blocks go on a vertical line.
+    (you can calculate it by dividing the game height with the cell width, which
+    in normal TPT is 384 / 4 = 96. 96 represented in hexadecimal is 60.) </i>
+57 cc 0a 00 <i> - the next four bytes represent how big the rest of the file is.
+              The size is represented as a regular C integer, except for the fact
+              that the first <b>byte</b> is the last, the second byte is the 
+              second-to-last in the file, and so on. </i>
+
+Below you can see the snippet of code that makes the first 12 bytes what they
+are.
+
+<div class="source hidden">
+outputData[0] = 'O';
+outputData[1] = 'P';
+outputData[2] = 'S';
+outputData[3] = '1';
+outputData[4] = SAVE_VERSION;
+outputData[5] = CELL;
+outputData[6] = blockW;
+outputData[7] = blockH;
+outputData[8] = finalDataLen;
+outputData[9] = finalDataLen >> 8;
+outputData[10] = finalDataLen >> 16;
+outputData[11] = finalDataLen >> 24;
+</div>
+
+
+
+2. The BSON save format <a id="bson"></a>
+-----------------------
+
+
+The rest of the file is compressed using bzip2, which you can easily decompress
+and explore. It's still not much good however, since the data inside /itself/ is
+also written using a binary format.
+
+You can in fact simply decompress the file using your favorite archive manager
+(that supports bzip2 data!), by stripping off the first 12 bytes (don't simply
+turn them to nulls!), and re-saving it as a ".bz2" file. Extracting that file
+will yield you the BSON data inside!
+
+The binary format is called <a href="http://bsonspec.org/">BSON</a> - a portmanteau of <a href="http://json.org/">JSON</a> (Javascript Object 
+Notation) and binary. It's tinier and strictly typed, but those also make it a 
+bit more tedious to parse.
+
+The structure of data in BSON will look kind of like this, approximating with
+JSON syntax:
+
+{ 
+  <b>"origin"</b>: {
+    <i>// The major version number of the game that the save was made in.
+    // MAJOR_VERSION -- looks like 81</i>
+    <b>"majorVersion"</b>: integer,
+    <i>// The minor version number (bugfixes, etc) of the game.
+    // MINOR_VERSION -- looks like 0</i>
+    <b>"minorVersion"</b>: integer,
+    <i>// The build index, which is basically like a never-ending counter that
+    // goes up every time TPT is compiled on the official build server.
+    // BUILD_NUM -- looks like 272</i>
+    <b>"buildNum"</b>: integer,
+    <i>// The snapshot ID, which is basically a Unix timestamp of when the 
+    // snapshot was compiled. It's rarely used, but you might still encounter it
+    // in the wild.
+    // SNAPSHOT_ID -- looks like 1346881831</i>
+    <b>"snapshotId"</b>: integer,
+    <i>// Release type, which is both an OS and an architecture identifier, all
+    // in one!
+    // IDENT_PLATFORM -- looks like "WIN32" or "LIN64"</i>
+    <b>"releaseType"</b>: string,
+    <i>// Build type, which tells you if the game was built on legacy or 
+    // SSE1/2/3 TPT.
+    // IDENT_BUILD -- looks like "SSE3" or "LEGACY"</i>
+    <b>"builtType"</b>: string
+  },
+  
+  <i>// Is water equalization turned on?</i>
+  <b>"waterEEnabled"</b>: boolean,
+  
+  <i>// Is heat simulation turned /off/?</i>
+  <b>"legacyEnable"</b>: boolean,
+  
+  <i>// Is Newtonian Gravity turned on?</i>
+  <b>"gravityEnable"</b>: boolean,
+  
+  <i>// Is Ambient Heat turned on?</i>
+  <b>"aheat_enable"</b>: boolean,
+  
+  <i>// Was the game paused when saving?</i>
+  <b>"paused"</b>: boolean,
+
+  <i>// Which Gravity Mode to use?
+  // Vertical : 0 (the default)
+  // Off: 1
+  // Radial: 2</i>
+  <b>"gravityMode"</b>: integer,
+
+  <i>// Which Air Mode to use?
+  // All on : 0 (the default)
+  // No Pressure : 1 
+  // No Velocity : 2
+  // No Pressure &amp; Velocity : 3
+  // No Update : 4</i>
+  <b>"airMode"</b>: integer, 
+  
+  <i>// Not yet used: 
+  <i>// "leftSelectedElement": integer,
+  // "rightSelectedElement": integer,
+  // "activeMenu": integer,</i>
+
+  <i>// All of the next properties are totally optional. They might appear, 
+  // and usually they do, but they also might not.
+  
+  // All of them use some kind of freaky format so bear with me and scroll down
+  // to find the details for a particular format.</i>
+
+  <i>// Particles and all about them that's saved</i>
+  <b>"parts"</b>: binary (user-defined format!),
+
+  <i>// How many particles are in a specific position in the parts array</i>
+  <b>"partsPos"</b>: binary (user-defined format!),
+
+  <i>// Wall grid</i>
+  <b>"wallMap"</b>: binary (user-defined format!),
+
+  <i>// A special wall grid for fan-walls</i>
+  <b>"fanMap"</b>: binary (user-defined format!),
+
+  <i>// Even more special grid for soap connection points.
+  // I'll detail some parts, but make sure to check out the source code.</i>
+  <b>"soapLinks"</b>: binary (user-defined format!),
+  
+  <i>// Signs
+  // Signs are the only easy format, I'll detail them here:</i>
+  <b>"signs"</b>: [
+    <i>// (each sign adds an object into this array!)</i>
+    {
+     <b>"text"</b>: string,
+     <b>"justification"</b>: integer,
+     <b>"x"</b>: integer,
+     <b>"y"</b>: integer
+    }
+  ]
+
+  <i>// Palette of element IDs: 
+  // not saved with current format saves.
+  // Might be in the future.</i>
+  "element name": element ID,
+  ...
+}
+
+From here on in, I really suggest you look at the source code as well as read
+the description. I'm not always correct as I've learned, so you might find some
+quirks or details that I've left out or missed entirely.
+
+
+
+The wall map format <a id="wallmap"></a>
+-------------------
+
+<div class="source hidden">
+//Read wall and fan data
+if(wallData)
+{
+  j = 0;
+  if(blockW * blockH > wallDataLen)
+  {
+    fprintf(stderr, "Not enough wall data\n");
+    goto fail;
+  }
+  for(x = 0; x &lt; blockW; x++)
+  {
+    for(y = 0; y &lt; blockH; y++)
+    {
+      if (wallData[y*blockW+x])
+        blockMap[blockY+y][blockX+x] = wallData[y*blockW+x];
+
+      if (blockMap[y][x]==O_WL_WALLELEC)
+        blockMap[y][x]=WL_WALLELEC;
+      if (blockMap[y][x]==O_WL_EWALL)
+        blockMap[y][x]=WL_EWALL;
+      if (blockMap[y][x]==O_WL_DETECT)
+        blockMap[y][x]=WL_DETECT;
+      if (blockMap[y][x]==O_WL_STREAM)
+        blockMap[y][x]=WL_STREAM;
+      if (blockMap[y][x]==O_WL_FAN||blockMap[y][x]==O_WL_FANHELPER)
+        blockMap[y][x]=WL_FAN;
+      if (blockMap[y][x]==O_WL_ALLOWLIQUID)
+        blockMap[y][x]=WL_ALLOWLIQUID;
+      if (blockMap[y][x]==O_WL_DESTROYALL)
+        blockMap[y][x]=WL_DESTROYALL;
+      if (blockMap[y][x]==O_WL_ERASE)
+        blockMap[y][x]=WL_ERASE;
+      if (blockMap[y][x]==O_WL_WALL)
+        blockMap[y][x]=WL_WALL;
+      if (blockMap[y][x]==O_WL_ALLOWAIR)
+        blockMap[y][x]=WL_ALLOWAIR;
+      if (blockMap[y][x]==O_WL_ALLOWSOLID)
+        blockMap[y][x]=WL_ALLOWSOLID;
+      if (blockMap[y][x]==O_WL_ALLOWALLELEC)
+        blockMap[y][x]=WL_ALLOWALLELEC;
+      if (blockMap[y][x]==O_WL_EHOLE)
+        blockMap[y][x]=WL_EHOLE;
+      if (blockMap[y][x]==O_WL_ALLOWGAS)
+        blockMap[y][x]=WL_ALLOWGAS;
+      if (blockMap[y][x]==O_WL_GRAV)
+        blockMap[y][x]=WL_GRAV;
+      if (blockMap[y][x]==O_WL_ALLOWENERGY)
+        blockMap[y][x]=WL_ALLOWENERGY;
+
+      if (blockMap[y][x] == WL_FAN &amp;&amp; fanData)
+      {
+        if(j+1 >= fanDataLen)
+        {
+          fprintf(stderr, "Not enough fan data\n");
+        }
+        fanVelX[blockY+y][blockX+x] = (fanData[j++]-127.0f)/64.0f;
+        fanVelY[blockY+y][blockX+x] = (fanData[j++]-127.0f)/64.0f;
+      }
+
+      if (blockMap[y][x] &lt; 0 || blockMap[y][x] >= UI_WALLCOUNT)
+        blockMap[y][x] = 0;
+    }
+  }
+}
+</div>
+
+So, the size of this tremendous data structure is usually how many walls could
+fit into a save. You can use in-the-code constants and calculate it like this:
+
+(XRES*YRES)/CELL
+With official TPT, this value comes right at 58752 elements.
+
+First things first, convert the very linear data structure that walls are kept
+in into a more two-dimensional grid. Code like the below should suffice:
+
+<b>for (x = 0; x &lt; blockW, x++)
+  for (y = 0; y &lt; blockH, y++)
+    blockmap [x] [y] = wallData [y * blockW + x];</b>
+
+Second, you'll have to convert every wall that uses old wall values <a href="https://github.com/simtr/The-Powder-Toy/blob/c4dcb37de40eda86871ba4e0992877528a208e39/src/simulation/SimulationData.h#L22-L57">(O_WL_*)</a> into
+newer wall values.
+
+Special case though: if the wall type is O_WL_FANHELPER, the new wall you should
+use instead of it is WL_FAN. 
+
+<div class="source hidden">
+if (blockMap[y][x]==O_WL_FAN||blockMap[y][x]==O_WL_FANHELPER)
+  blockMap[y][x]=WL_FAN;
+</div>
+
+
+The fan-map subformat <a id="fanmap"></a>
+~~~~~~~~~~~~~~~~~~~~~
+
+The fan-map looks kinda like this: 
+[x velocity for fan #1, y velocity for fan #1, 
+ x velocity for fan #2, y velocity for fan #2, 
+ ...]
+
+The actual velocity is calculated from the stored value 
+like this: 
+
+<b>actual = (stored-127.0f)/64.0f</b>
+
+
+Keep a 'fan data array pointer' (I'll use j) at where you are in the array currently.
+If the wall type is WL_FAN and the fan data array exists (read in earlier), then
+check if j is in range of the fan data array. If it is not, copy over fan 
+velocity data kinda like this:
+
+<b>fanVelX[blockY+y][blockX+x] = (fanData[j++]-127.0f)/64.0f; // j = 1
+fanVelY[blockY+y][blockX+x] = (fanData[j++]-127.0f)/64.0f; // j = 2 etc</b>
+
+<div class="source hidden">
+// before the double loop: 
+j = 0; 
+
+if (blockMap[y][x] == WL_FAN &amp;&amp; fanData)
+{
+  if(j+1 >= fanDataLen)
+  {
+    fprintf(stderr, "Not enough fan data\n");
+  }
+  fanVelX[blockY+y][blockX+x] = (fanData[j++]-127.0f)/64.0f;
+  fanVelY[blockY+y][blockX+x] = (fanData[j++]-127.0f)/64.0f;
+}</div>
+
+Some data may be left out which your code will have to tolerate and replace 
+with 'none-walls' of index 0.
+
+
+
+The particle map format <a id="partsmap"></a>
+-----------------------
+
+Now for the real can of worms, the particle map! Try and follow through this,
+it's kind of a wild ride.
+
+<div class="source hidden">
+//Read particle data
+if(partsData &amp;amp;&amp;amp; partsPosData)
+{
+  int newIndex = 0, fieldDescriptor, tempTemp;
+  int posCount, posTotal, partsPosDataIndex = 0;
+  int saved_x, saved_y;
+  if(fullW * fullH * 3 &gt; partsPosDataLen)
+  {
+    fprintf(stderr, "Not enough particle position data\n");
+    goto fail;
+  }
+
+  partsSimIndex = (unsigned int*)calloc(NPART, sizeof(unsigned));
+  partsCount = 0;
+
+  i = 0;
+  newIndex = 0;
+  for (saved_y=0; saved_y&lt;fullH; saved_y++)
+  {
+    for (saved_x=0; saved_x&lt;fullW; saved_x++)
+    {
+      //Read total number of particles at this position
+      posTotal = 0;
+      posTotal |= partsPosData[partsPosDataIndex++]&lt;&lt;16;
+      posTotal |= partsPosData[partsPosDataIndex++]&lt;&lt;8;
+      posTotal |= partsPosData[partsPosDataIndex++];
+      //Put the next posTotal particles at this position
+      for (posCount=0; posCount&lt;posTotal; posCount++)
+      {
+        particlesCount = newIndex+1;
+        if(newIndex&gt;=NPART)
+        {
+          goto fail;
+        }
+
+        //i+3 because we have 4 bytes of required fields (type (1), descriptor (2), temp (1))
+        if (i+3 &gt;= partsDataLen)
+          goto fail;
+        x = saved_x + fullX;
+        y = saved_y + fullY;
+        fieldDescriptor = partsData[i+1];
+        fieldDescriptor |= partsData[i+2] &lt;&lt; 8;
+        if(x &gt;= fullW || x &lt; 0 || y &gt;= fullH || y &lt; 0)
+        {
+          fprintf(stderr, "Out of range [%d]: %d %d, [%d, %d], [%d, %d]\n", i, x, y, (unsigned)partsData[i+1], (unsigned)partsData[i+2], (unsigned)partsData[i+3], (unsigned)partsData[i+4]);
+          goto fail;
+        }
+        if(partsData[i] &gt;= PT_NUM)
+          partsData[i] = PT_DMND;        //Replace all invalid elements with diamond
+
+        if(newIndex &lt; 0 || newIndex &gt;= NPART)
+          goto fail;
+
+        //Store partsptr index+1 for this saved particle index (0 means not loaded)
+        partsSimIndex[partsCount++] = newIndex+1;
+
+        //Clear the particle, ready for our new properties
+        memset(&amp;(particles[newIndex]), 0, sizeof(Particle));
+
+        //Required fields
+        particles[newIndex].type = partsData[i];
+        particles[newIndex].x = x;
+        particles[newIndex].y = y;
+        i+=3;
+
+        //Read temp
+        if(fieldDescriptor &amp; 0x01)
+        {
+          //Full 16bit int
+          tempTemp = partsData[i++];
+          tempTemp |= (((unsigned)partsData[i++]) &lt;&lt; 8);
+          particles[newIndex].temp = tempTemp;
+        }
+        else
+        {
+          //1 Byte room temp offset
+          tempTemp = (char)partsData[i++];
+          particles[newIndex].temp = tempTemp+294.15f;
+        }
+
+        //Read life
+        if(fieldDescriptor &amp; 0x02)
+        {
+          if(i &gt;= partsDataLen) goto fail;
+          particles[newIndex].life = partsData[i++];
+          //Read 2nd byte
+          if(fieldDescriptor &amp; 0x04)
+          {
+            if(i &gt;= partsDataLen) goto fail;
+            particles[newIndex].life |= (((unsigned)partsData[i++]) &lt;&lt; 8);
+          }
+        }
+
+        //Read tmp
+        if(fieldDescriptor &amp; 0x08)
+        {
+          if(i &gt;= partsDataLen) goto fail;
+          particles[newIndex].tmp = partsData[i++];
+          //Read 2nd byte
+          if(fieldDescriptor &amp; 0x10)
+          {
+            if(i &gt;= partsDataLen) goto fail;
+            particles[newIndex].tmp |= (((unsigned)partsData[i++]) &lt;&lt; 8);
+            //Read 3rd and 4th bytes
+            if(fieldDescriptor &amp; 0x1000)
+            {
+              if(i+1 &gt;= partsDataLen) goto fail;
+              particles[newIndex].tmp |= (((unsigned)partsData[i++]) &lt;&lt; 24);
+              particles[newIndex].tmp |= (((unsigned)partsData[i++]) &lt;&lt; 16);
+            }
+          }
+        }
+
+        //Read ctype
+        if(fieldDescriptor &amp; 0x20)
+        {
+          if(i &gt;= partsDataLen) goto fail;
+          particles[newIndex].ctype = partsData[i++];
+          //Read additional bytes
+          if(fieldDescriptor &amp; 0x200)
+          {
+            if(i+2 &gt;= partsDataLen) goto fail;
+            particles[newIndex].ctype |= (((unsigned)partsData[i++]) &lt;&lt; 24);
+            particles[newIndex].ctype |= (((unsigned)partsData[i++]) &lt;&lt; 16);
+            particles[newIndex].ctype |= (((unsigned)partsData[i++]) &lt;&lt; 8);
+          }
+        }
+
+        //Read dcolour
+        if(fieldDescriptor &amp; 0x40)
+        {
+          if(i+3 &gt;= partsDataLen) goto fail;
+          particles[newIndex].dcolour = (((unsigned)partsData[i++]) &lt;&lt; 24);
+          particles[newIndex].dcolour |= (((unsigned)partsData[i++]) &lt;&lt; 16);
+          particles[newIndex].dcolour |= (((unsigned)partsData[i++]) &lt;&lt; 8);
+          particles[newIndex].dcolour |= ((unsigned)partsData[i++]);
+        }
+
+        //Read vx
+        if(fieldDescriptor &amp; 0x80)
+        {
+          if(i &gt;= partsDataLen) goto fail;
+          particles[newIndex].vx = (partsData[i++]-127.0f)/16.0f;
+        }
+
+        //Read vy
+        if(fieldDescriptor &amp; 0x100)
+        {
+          if(i &gt;= partsDataLen) goto fail;
+          particles[newIndex].vy = (partsData[i++]-127.0f)/16.0f;
+        }
+
+        //Read tmp2
+        if(fieldDescriptor &amp; 0x400)
+        {
+          if(i &gt;= partsDataLen) goto fail;
+          particles[newIndex].tmp2 = partsData[i++];
+          if(fieldDescriptor &amp; 0x800)
+          {
+            if(i &gt;= partsDataLen) goto fail;
+            particles[newIndex].tmp2 |= (((unsigned)partsData[i++]) &lt;&lt; 8);
+          }
+        }
+
+        //Read pavg
+        if(fieldDescriptor &amp; 0x2000)
+        {
+          if(i+3 &gt;= partsDataLen) goto fail;
+          int pavg;
+          pavg = partsData[i++];
+          pavg |= (((unsigned)partsData[i++]) &lt;&lt; 8);
+          particles[newIndex].pavg[0] = (float)pavg;
+          pavg = partsData[i++];
+          pavg |= (((unsigned)partsData[i++]) &lt;&lt; 8);
+          particles[newIndex].pavg[1] = (float)pavg;
+        }
+
+        //Particle specific parsing:
+        switch(particles[newIndex].type)
+        {
+        case PT_SOAP:
+          //Clear soap links, links will be added back in if soapLinkData is present
+          particles[newIndex].ctype &amp;= ~6;
+          break;
+        case PT_BOMB:
+          if (particles[newIndex].tmp!=0 &amp;&amp; savedVersion &lt; 81)
+          {
+            particles[newIndex].type = PT_EMBR;
+            particles[newIndex].ctype = 0;
+            if (particles[newIndex].tmp==1)
+              particles[newIndex].tmp = 0;
+          }
+          break;
+        case PT_DUST:
+          if (particles[newIndex].life&gt;0 &amp;&amp; savedVersion &lt; 81)
+          {
+            particles[newIndex].type = PT_EMBR;
+            particles[newIndex].ctype = (particles[newIndex].tmp2&lt;&lt;16) | (particles[newIndex].tmp&lt;&lt;8) | particles[newIndex].ctype;
+            particles[newIndex].tmp = 1;
+          }
+          break;
+        case PT_FIRW:
+          if (particles[newIndex].tmp&gt;=2 &amp;&amp; savedVersion &lt; 81)
+          {
+            int caddress = restrict_flt(restrict_flt((float)(particles[newIndex].tmp-4), 0.0f, 200.0f)*3, 0.0f, (200.0f*3)-3);
+            particles[newIndex].type = PT_EMBR;
+            particles[newIndex].tmp = 1;
+            particles[newIndex].ctype = (((unsigned char)(firw_data[caddress]))&lt;&lt;16) | (((unsigned char)(firw_data[caddress+1]))&lt;&lt;8) | ((unsigned char)(firw_data[caddress+2]));
+          }
+          break;
+        case PT_PSTN:
+          if (savedVersion &lt; 87 &amp;&amp; particles[newIndex].ctype)
+            particles[newIndex].life = 1;
+          break;
+        case PT_STKM:
+        case PT_STKM2:
+        case PT_FIGH:
+          if (savedVersion &lt; 88 &amp;&amp; particles[newIndex].ctype == OLD_SPC_AIR)
+            particles[newIndex].ctype = SPC_AIR;
+          break;
+        case PT_FILT:
+          if (savedVersion &lt; 89)
+          {
+            if (particles[newIndex].tmp&lt;0 || particles[newIndex].tmp&gt;3)
+              particles[newIndex].tmp = 6;
+            particles[newIndex].ctype = 0;
+          }
+          break;
+        case PT_QRTZ:
+        case PT_PQRT:
+          if (savedVersion &lt; 89)
+          {
+            particles[newIndex].tmp2 = particles[newIndex].tmp;
+            particles[newIndex].tmp = particles[newIndex].ctype;
+            particles[newIndex].ctype = 0;
+          }
+          break;
+        }
+        //note: PSv was used in version 77.0 and every version before, add something in PSv too if the element is that old
+        newIndex++;
+      }
+    }
+  }
+  if (soapLinkData)
+  {
+    int soapLinkDataPos = 0;
+    for (i=0; i&lt;partsCount; i++)
+    {
+      if (partsSimIndex[i] &amp;&amp; particles[partsSimIndex[i]-1].type == PT_SOAP)
+      {
+        // Get the index of the particle forward linked from this one, if present in the save data
+        int linkedIndex = 0;
+        if (soapLinkDataPos+3 &gt; soapLinkDataLen) break;
+        linkedIndex |= soapLinkData[soapLinkDataPos++]&lt;&lt;16;
+        linkedIndex |= soapLinkData[soapLinkDataPos++]&lt;&lt;8;
+        linkedIndex |= soapLinkData[soapLinkDataPos++];
+        // All indexes in soapLinkData and partsSimIndex have 1 added to them (0 means not saved/loaded)
+        if (!linkedIndex || linkedIndex-1&gt;=partsCount || !partsSimIndex[linkedIndex-1])
+          continue;
+        linkedIndex = partsSimIndex[linkedIndex-1]-1;
+        newIndex = partsSimIndex[i]-1;
+
+        //Attach the two particles
+        particles[newIndex].ctype |= 2;
+        particles[newIndex].tmp = linkedIndex;
+        particles[linkedIndex].ctype |= 4;
+        particles[linkedIndex].tmp2 = newIndex;
+      }
+    }
+  }
+}
+</div>
+
+To read it we'll need both partsData and partsPosData to exist in the save
+with enough data in partsPosData for every particle * 3.
+
+Size of partsPosData: fullW * fullH * 3
+
+partsPosData is basically how many particles are under this exact position, 
+starting from {0,0} going towards {x:384, y:0} and then to {x:0,y:1} and onward.
+
+The full number is consisted of three bytes which are or'ed together conveniently:
+
+[0x00, 0x00, 0x05, 
+ 0x00, 0x00, 0x00, 
+ 0x00, 0x00, 0x04, 
+ ...]
+
+<b>//Read total number of particles at this position
+posTotal = 0;
+posTotal |= partsPosData[partsPosDataIndex++] &lt;&lt; 16;
+posTotal |= partsPosData[partsPosDataIndex++] &lt;&lt; 8;
+posTotal |= partsPosData[partsPosDataIndex++];</b>
+
+For every particle in a given position x, y, there's posTotal particles we 
+have to create. Loop from 0 to posTotal to go over every particle in the 
+given position. 
+
+Now comes the fun part.
+We have 4 bytes of required fields: 
+<b>type (byte 0), descriptor (byte 2), temp (byte 1)</b>
+... and a whole lot of optional fields.
+
+The array looks kinda like this: 
+
+[type, temp, descriptor, [optionals], 
+ type, temp, descriptor, [optionals], 
+ ...]
+
+Now back to the implementation.
+
+Your particle's position will be determined by adding the stage's size in that
+dimension to the current position in the loop. Please look at the code, this will
+make more sense to you.
+
+Saved particle properties <a id="savedparts"></a>
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First off, to check if the descriptor field has a given byte set, you have to 
+binary-AND the descriptor field with the given bit. 
+
+e.g If the descriptor field has a 0x02 bit set
+bool has_it = descriptor_field &amp; 0x02 != 0;
+
+
+If the descriptor field has a 0x01 bit set, then your temp value will have an
+extra byte appended to its front as the optional byte #4 and it'll be saved 
+as an absolute temperature value.
+<b>[type, temp, descriptor, x-temp]
+endresult = temp | x-temp&lt;&lt;8;</b>
+
+Else the temp value will be used as an offset from 294.15 K.
+<b>endresult = temp + 294.15f;</b>
+
+If the descriptor field has a 0x02 bit set then your next byte will be the life
+value. If the descriptor field also has a 0x04 bit set then the life value will
+have two bytes instead of one and the second byte will have to be attached to
+the first one.
+
+<b>[type, temp, descriptor[, ...], life[, x-life]]
+life = life | x-life &lt;&lt; 8</b>
+
+If the descriptor field has a 0x08 bit set then your next byte will be the tmp
+value. If the descriptor field also has a 0x10 bit set then the tmp value will
+have two bytes instead of one and the second byte will have to be attached to
+the first one. If the descriptor field also has a 0x1000 bit set then the tmp 
+value will also have two more extra bytes set.
+
+<b>[type, temp, descriptor[, ...], tmp [, x-tmp[, x-x-tmp, x-x-x-tmp]]]
+tmp = tmp | x-tmp &lt;&lt; 8 [ | x-x-tmp &lt;&lt; 24 | x-x-x-tmp &lt; &lt; 16];</b>
+
+If the descriptor field has a 0x20 bit set then your next byte will be the ctype
+value. If the descriptor field also has a 0x200 bit set then the ctype value will
+have four bytes instead of one and the second byte will have to be attached to
+the first one.
+
+<b>[type, temp, descriptor[, ...], ctype[, x-ctype, x-x-ctype, x-x-x-ctype]]
+ctype = ctype [ | x-ctype &lt;&lt; 24 | x-x-ctype &lt; &lt; 16 | x-x-x-ctype &lt;&lt; 8 ];</b>
+
+If the descriptor field has a 0x40 bit set then your next four bytes will be the 
+dcolour value. If the descriptor field also has a 0x200 bit set then the dcolour 
+value will have four bytes instead of one and the second byte will have to be 
+attached to the first one.
+
+<b>[type, temp, descriptor[, ...], dcolour, x-dcolour, x-x-dcolour, x-x-x-dcolour]
+dcolour = dcolour &lt;&lt; 24 | x-dcolour &lt;&lt; 16 | x-x-dcolour &lt;&lt; 8 | x-x-x-dcolour  ];</b>
+
+vx and vy are nice and simple, one byte each. vx is indicated by the descriptor
+having a 0x80 byte and vy by the 0x100 byte.
+
+<b>[type, temp, descriptor[, ...], vx_, vy_]
+vx = (vx_-127.0f)/16.0f;
+vy = (vy_-127.0f)/16.0f;</b>
+
+The tmp2 field gets wonky again: 0x400 identifies it and 0x800 turns on the 
+additional byte.
+
+<b>[type, temp, descriptor[, ...], tmp[, x-tmp]]
+tmp = tmp | x-tmp &lt;&lt; 8</b>
+
+Then there's pavg which I am not sure what it does. Identified by 0x2000, 
+two bytes per array index, two array indices.
+
+<b>[type, temp, descriptor[, ...], pavg0, x-pavg0, pavg1, x-pavg1]
+pavg[0] = pavg0 | x-pavg0 &lt;&lt; 8
+pavg[1] = pavg1 | x-pavg1 &lt;&lt; 8</b>
+
+Now for the fun particle-specific stuff. 
+
+<div class="source hidden">
+switch(particles[newIndex].type)
+{
+case PT_SOAP:
+  //Clear soap links, links will be added back in if soapLinkData is present
+  particles[newIndex].ctype &amp;= ~6;
+  break;
+case PT_BOMB:
+  if (particles[newIndex].tmp!=0 &amp;&amp; savedVersion &lt; 81)
+  {
+    particles[newIndex].type = PT_EMBR;
+    particles[newIndex].ctype = 0;
+    if (particles[newIndex].tmp==1)
+      particles[newIndex].tmp = 0;
+  }
+  break;
+case PT_DUST:
+  if (particles[newIndex].life&gt;0 &amp;&amp; savedVersion &lt; 81)
+  {
+    particles[newIndex].type = PT_EMBR;
+    particles[newIndex].ctype = (particles[newIndex].tmp2&lt;&lt;16) | (particles[newIndex].tmp&lt;&lt;8) | particles[newIndex].ctype;
+    particles[newIndex].tmp = 1;
+  }
+  break;
+case PT_FIRW:
+  if (particles[newIndex].tmp&gt;=2 &amp;&amp; savedVersion &lt; 81)
+  {
+    int caddress = restrict_flt(restrict_flt((float)(particles[newIndex].tmp-4), 0.0f, 200.0f)*3, 0.0f, (200.0f*3)-3);
+    particles[newIndex].type = PT_EMBR;
+    particles[newIndex].tmp = 1;
+    particles[newIndex].ctype = (((unsigned char)(firw_data[caddress]))&lt;&lt;16) | (((unsigned char)(firw_data[caddress+1]))&lt;&lt;8) | ((unsigned char)(firw_data[caddress+2]));
+  }
+  break;
+case PT_PSTN:
+  if (savedVersion &lt; 87 &amp;&amp; particles[newIndex].ctype)
+    particles[newIndex].life = 1;
+  break;
+case PT_STKM:
+case PT_STKM2:
+case PT_FIGH:
+  if (savedVersion &lt; 88 &amp;&amp; particles[newIndex].ctype == OLD_SPC_AIR)
+    particles[newIndex].ctype = SPC_AIR;
+  break;
+case PT_FILT:
+  if (savedVersion &lt; 89)
+  {
+    if (particles[newIndex].tmp&lt;0 || particles[newIndex].tmp&gt;3)
+      particles[newIndex].tmp = 6;
+    particles[newIndex].ctype = 0;
+  }
+  break;
+case PT_QRTZ:
+case PT_PQRT:
+  if (savedVersion &lt; 89)
+  {
+    particles[newIndex].tmp2 = particles[newIndex].tmp;
+    particles[newIndex].tmp = particles[newIndex].ctype;
+    particles[newIndex].ctype = 0;
+  }
+  break;
+}
+</div>
+
+PT_SOAP will have its link data (ctype) set to the binary NOT of 
+0x06 which apparently clears the link data. Afterwards the link 
+data will be recreated.
+
+PT_BOMB with non-0 tmp (when the version is before 81) will be re-
+created as PT_EMBR because before 81 the sparkles were not EMBR 
+at all.
+
+PT_DUST will too turn to PT_EMBR with non-0 TMP and save version 
+before 81 as it was used as firework glow.
+
+PT_FIRW will also turn to PT_EMBR if it's in glow mode.
+
+PT_PSTN will have its life set to 1 if its save version is below 87 
+and it has a ctype.
+
+PT_STKM, PT_STKM2 and PT_FIGH, (with save version lt 88) if they have the ctype 
+OLD_SPC_AIR, will have their ctypes changed to SPC_AIR.
+
+PT_FILT will have (with save version lt 89), its tmp turned to 6 if it's less 
+than 0 or more than 3, new tmp will be set to 6. The ctype will as well be 
+set to 0.
+
+For QRTZ and PQRT, before version 89, the tmp2 will be set to the tmp, 
+the tmp set to the ctype and the ctype to 0. 
+
+That's about it for custom properties.
+
+Soap links <a id="soaplinks"></a>
+----------
+
+There are two indexes saved per soap particle: the "next" and "previous" linked
+index. So basically in the end we'll have a doubly linked list of SOAP. The saved
+soap links array has three bytes and keeps the "next" links only. 
+
+Three bytes at a time, like this:
+[next, x-next, x-x-next]
+
+linkedIndex = x-x-next &lt;&lt; 16 | x-next &lt;&lt; 8 | next;
+newIndex = current particle being 'modified' by the parts data loop
+
+To attach the two particles, do like the below code does:
+<div class="source hidden">
+//Attach the two particles
+particles[newIndex].ctype |= 2;
+particles[newIndex].tmp = linkedIndex;
+particles[linkedIndex].ctype |= 4;
+particles[linkedIndex].tmp2 = newIndex;
+</div>
+
+<p style="color: rgba(255, 255, 255, 0.5)">
+Written on the eve of 14th November 2013 by boxmein. It can be out of date but it might not be.
+As an extra, open this page with "#[optionally usual anchor,]contrast" to make this page less 
+purple and more black-on-white.</p>
+
+
+</div>
+  <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script>
+  $(document).ready(function() {
+    $('.source').click(function(evt) {
+      if($(this).hasClass('hidden')) {
+        $(this).removeClass('hidden');
+      }
+      else {
+        $(this).addClass('hidden');
+      }
+    });
+    hljs.initHighlightingOnLoad();
+  });
+  </script>
+</body>
+</html>
