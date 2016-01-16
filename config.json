@@ -1,7 +1,0 @@
-{
-  "reference_dir": "!/data/references",
-  "editor_dir": "!/data/editors",
-  
-  "references": ["lua-reference.html", "save-format.html"],
-  "editors": ["c", "c++", "lua"]
-}
