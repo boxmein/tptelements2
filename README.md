@@ -1,7 +1,8 @@
 # tptelements2
 
-A bigger, better, faster, stronger, and overall cooler TPTElements. Written in
-Node.js, using express.js :D
+A quicker, slicker, sleeker, fleeker version of TPTElements. I just replaced all
+the Node.js server-side code with client-side Makefile rendering. This thing 
+runs on a Makefile!
 
 ## Using the site
 
