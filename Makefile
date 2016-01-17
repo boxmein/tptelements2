@@ -8,6 +8,10 @@ JADEC=jade
 # (needed if you want to generate search.json, which may or may not be possible)
 JSON_MINIFY=json-minify 
 
+ifndef ROOT
+$(error Set the environment variable ROOT to where this HTML will be hosted! eg /tpt/tptelements)
+endif
+
 .PHONY: all css js refs
 
 all: css js refs editor_templates build/index.html build/editor.html
@@ -18,7 +22,7 @@ all: css js refs editor_templates build/index.html build/editor.html
 
 build/index.html: base_jade/index.jade base_jade/layout.jade base_jade/header.jade base_jade/footer.jade
 	mkdir -p build
-	jade $< -o build
+	$(JADEC) $< -O '{"root": "$(ROOT)"}' -o build
 
 # 
 # Generate the editor page
@@ -26,7 +30,7 @@ build/index.html: base_jade/index.jade base_jade/layout.jade base_jade/header.ja
 
 build/editor.html: base_jade/editor.jade base_jade/layout.jade base_jade/header.jade base_jade/footer.jade
 	mkdir -p build
-	jade $< -o build
+	$(JADEC) $< -O '{"root": "$(ROOT)"}' -o build
 
 #
 # Copy over the code editor templates
@@ -45,7 +49,7 @@ editor_templates: build/editors/c build/editors/c++ build/editors/lua
 build/reference/lua-reference.html: data/references/lua-reference.jade base_jade/layout.jade base_jade/header.jade base_jade/footer.jade
 	mkdir -p build/reference
 	cp base_jade/header.jade base_jade/footer.jade base_jade/layout.jade data/references/
-	$(JADEC) data/references/lua-reference.jade -o build/reference
+	$(JADEC) -O '{"root": "$(ROOT)"}' data/references/lua-reference.jade -o build/reference
 	rm data/references/layout.jade data/references/header.jade data/references/footer.jade
 
 build/reference/save-format.html: data/references/save-format.html
