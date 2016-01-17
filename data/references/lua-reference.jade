@@ -4,8 +4,9 @@
 extends layout
 
 block append head
-  link(rel='stylesheet', type='text/css', href='/css/lua-reference.css')
-  link(rel='stylesheet', type='text/css', href='/highlightjs/styles/mysolarized.css')
+  title lua reference - tptelements
+  link(rel='stylesheet', type='text/css', href='#{root}/css/lua-reference.css')
+  link(rel='stylesheet', type='text/css', href='#{root}/highlightjs/styles/mysolarized.css')
 
 block content
   h1 Mega coding reference
@@ -101,8 +102,8 @@ block append header
       li: a(href='#goltable') LIFE ctypes
 
 block append body
-  script(src='/highlightjs/highlight.pack.js')
-  script(src='/js/lua-ref-stuff.js')
+  script(src='#{root}/highlightjs/highlight.pack.js')
+  script(src='#{root}/js/lua-ref-stuff.js')
   script.
     hljs.initHighlightingOnLoad();
 

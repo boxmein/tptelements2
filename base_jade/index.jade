@@ -5,6 +5,6 @@ block content
   script.
     if (location.hash) {
       if (/^\#(cpp|lua|c)$/.test(location.hash)) {
-        location.href = '/editor/' + location.hash.slice(1);
+        location.href = '#{root}/editor.html#' + location.hash.slice(1);
       }
     }
