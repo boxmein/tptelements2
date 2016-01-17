@@ -6,41 +6,51 @@ SASSC=sassc
 JADEC=jade
 # `npm install -g json-minify` 
 # (needed if you want to generate search.json, which may or may not be possible)
-JSON_MINIFY=json-minify
+JSON_MINIFY=json-minify 
 
-# recursive copy
-# for Windows: (pick one)
-# R_COPY=robocopy /s /e
-# R_COPY=xcopy /s /e
-# for linux:
-R_COPY=cp -a 
+.PHONY: all css js refs
 
+all: css js refs editor_templates build/index.html 
 
+# 
+# Generate the index page
+# 
 
-.PHONY: all css refs
+build/index.html: base_jade/index.jade
+	mkdir -p build
+	jade $< -o build
 
-all: css refs
+# 
+# Generate the editor page
+#
 
-build: 
-	mkdir build
+build/editor.html: base_jade/editor.jade
+	mkdir -p build
+	jade $< -o build
 
-build/css: build
-	mkdir build/css
+#
+# Copy over the code editor templates
+# 
 
-build/reference: build
-	mkdir build/reference
+build/editors/%: data/editors/%
+	mkdir -p build/editors
+	cp $< $@
+
+editor_templates: build/editors/c build/editors/c++ build/editors/lua
 
 #
 # Generate the Lua reference
 # 
 
-build/reference/lua-reference.html: build/reference data/references/lua-reference.jade base_jade/layout.jade base_jade/header.jade base_jade/footer.jade
+build/reference/lua-reference.html: data/references/lua-reference.jade base_jade/layout.jade base_jade/header.jade base_jade/footer.jade
+	mkdir -p build/reference
 	cp base_jade/header.jade base_jade/footer.jade base_jade/layout.jade data/references/
-	$(JADEC) data/references/lua-reference.jade -o build/lua-reference.html
+	$(JADEC) data/references/lua-reference.jade -o build/reference
 	rm data/references/layout.jade data/references/header.jade data/references/footer.jade
 
-build/reference/save-format.html: build/reference data/references/save-format.html
-	cp $< $@
+build/reference/save-format.html: data/references/save-format.html
+	mkdir -p build/reference
+	cp data/references/save-format.html $@
 
 refs: build/reference/save-format.html build/reference/lua-reference.html
 
@@ -49,13 +59,16 @@ refs: build/reference/save-format.html build/reference/lua-reference.html
 # 
 
 # haven't *quite* figured out what I can percent-match and how
-build/css/lua-reference.css: build/css styles/lua-reference.scss
+build/css/lua-reference.css: styles/lua-reference.scss
+	mkdir -p build/css
 	$(SASSC) styles/lua-reference.scss $@
 
-build/css/print.css: build/css styles/print.scss
+build/css/print.css: styles/print.scss
+	mkdir -p build/css
 	$(SASSC) styles/print.scss $@
 
-build/css/screen.css: build/css styles/screen.scss
+build/css/screen.css: styles/screen.scss
+	mkdir -p build/css
 	$(SASSC) styles/screen.scss $@
 
 css: build/css/print.css build/css/screen.css build/css/lua-reference.css
@@ -66,13 +79,18 @@ css: build/css/print.css build/css/screen.css build/css/lua-reference.css
 # 
 
 build/js: static/js
-	$(R_COPY) $< $@
+	mkdir -p build
+	cp -a $< $@
 
 build/highlightjs: static/highlightjs
-	$(R_COPY) $< $@
+	mkdir -p build
+	cp -a $< $@
 
 build/ace-editor: static/ace-editor
-	$(R_COPY) $< $@
+	mkdir -p build
+	cp -a $< $@
+
+js: build/js build/highlightjs build/ace-editor
 
 # 
 # search.lzw for the API Search thing
