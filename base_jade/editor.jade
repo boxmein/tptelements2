@@ -5,11 +5,11 @@ block append head
 
 block content
   h1 Code Editor
-  #editor=template
+  #editor
   #aside.hidden
 
 block append body
   script(src='/ace-editor/src-min-noconflict/ace.js', type='text/javascript', charset='utf-8')
   script(src='/js/editor-additions.js', type='text/javascript', charset='utf-8')
   script.
-    startup($, ace, '#{language}');
+    startup($, ace);
