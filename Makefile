@@ -4,10 +4,22 @@
 SASSC=sassc
 # `npm install -g jade`
 JADEC=jade
-# `npm install -g json-minify`
+# `npm install -g json-minify` 
+# (needed if you want to generate search.json, which may or may not be possible)
 JSON_MINIFY=json-minify
 
+# recursive copy
+# for Windows: (pick one)
+# R_COPY=robocopy /s /e
+# R_COPY=xcopy /s /e
+# for linux:
+R_COPY=cp -a 
+
+
+
 .PHONY: all css refs
+
+all: css refs
 
 build: 
 	mkdir build
@@ -27,7 +39,7 @@ build/reference/lua-reference.html: build/reference data/references/lua-referenc
 	$(JADEC) data/references/lua-reference.jade -o build/lua-reference.html
 	rm data/references/layout.jade data/references/header.jade data/references/footer.jade
 
-build/reference/save-format.html: data/references/save-format.html
+build/reference/save-format.html: build/reference data/references/save-format.html
 	cp $< $@
 
 refs: build/reference/save-format.html build/reference/lua-reference.html
@@ -48,6 +60,19 @@ build/css/screen.css: build/css styles/screen.scss
 
 css: build/css/print.css build/css/screen.css build/css/lua-reference.css
 
+
+# 
+# Copy all content in "static" into "build"
+# 
+
+build/js: static/js
+	$(R_COPY) $< $@
+
+build/highlightjs: static/highlightjs
+	$(R_COPY) $< $@
+
+build/ace-editor: static/ace-editor
+	$(R_COPY) $< $@
 
 # 
 # search.lzw for the API Search thing
