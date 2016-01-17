@@ -19,3 +19,7 @@ tmp
 
 # shh! future feature
 public/ace-editor/src-min-noconflict/mode-luatpt.js
+
+# build output
+build
+
