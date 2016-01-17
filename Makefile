@@ -10,13 +10,13 @@ JSON_MINIFY=json-minify
 
 .PHONY: all css js refs
 
-all: css js refs editor_templates build/index.html 
+all: css js refs editor_templates build/index.html build/editor.html
 
 # 
 # Generate the index page
 # 
 
-build/index.html: base_jade/index.jade
+build/index.html: base_jade/index.jade base_jade/layout.jade base_jade/header.jade base_jade/footer.jade
 	mkdir -p build
 	jade $< -o build
 
@@ -24,7 +24,7 @@ build/index.html: base_jade/index.jade
 # Generate the editor page
 #
 
-build/editor.html: base_jade/editor.jade
+build/editor.html: base_jade/editor.jade base_jade/layout.jade base_jade/header.jade base_jade/footer.jade
 	mkdir -p build
 	jade $< -o build
 
@@ -80,15 +80,15 @@ css: build/css/print.css build/css/screen.css build/css/lua-reference.css
 
 build/js: static/js
 	mkdir -p build
-	cp -a $< $@
+	cp -a $< build
 
 build/highlightjs: static/highlightjs
 	mkdir -p build
-	cp -a $< $@
+	cp -a $< build
 
 build/ace-editor: static/ace-editor
 	mkdir -p build
-	cp -a $< $@
+	cp -a $< build
 
 js: build/js build/highlightjs build/ace-editor
 
